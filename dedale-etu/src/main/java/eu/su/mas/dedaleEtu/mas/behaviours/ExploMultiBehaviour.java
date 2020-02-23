@@ -12,6 +12,8 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class ExploMultiBehaviour extends SimpleBehaviour{
 
@@ -24,6 +26,7 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 	private boolean finished = false;
 	private List<String> openNodes;
 	private Set<String> closedNodes;
+	private String position="";
 	
 	public ExploMultiBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
 		super(myAgent);
@@ -34,6 +37,14 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
+		position="";
+		MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+		ACLMessage msg = myAgent.receive(msgTemplate);
+		if(msg != null) {
+			System.out.println(myAgent.getLocalName()+" RECEIVE POSITION "+msg.getContent());
+			position = msg.getContent();
+		}
+		
 		if(this.myMap==null)
 			this.myMap= new MapRepresentation();
 		
@@ -74,6 +85,7 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 						this.myMap.addEdge(myPosition, nodeId);
 					}
 					if (nextNode==null) nextNode=nodeId;
+					if (nextNode.equals(position)) nextNode=null;
 				}
 			}
 
@@ -90,6 +102,12 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
 					nextNode=this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
+					Iterator<Couple<String, List<Couple<Observation, Integer>>>> iterBis=lobs.iterator();
+//					System.out.println(position+" EQUAAALS "+nextNode);
+					while(iterBis.hasNext() && position.equals(nextNode)) {
+//						System.out.println(position+" EQUAAAAAALS "+nextNode);
+						nextNode = iterBis.next().getLeft();
+					}
 				}
 				
 				
