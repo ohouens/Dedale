@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.graphstream.algorithm.Dijkstra;
 import org.graphstream.graph.Edge;
@@ -16,6 +17,7 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 
 import dataStructures.serializableGraph.*;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import javafx.application.Platform;
 
 /**
@@ -65,6 +67,7 @@ public class MapRepresentation implements Serializable {
 		Platform.runLater(() -> {
 			openGui();
 		});
+	
 		//this.viewer = this.g.display();
 
 		this.nbEdges=0;
@@ -150,7 +153,38 @@ public class MapRepresentation implements Serializable {
 		this.g=null;
 
 	}
-
+	
+	public SerializableSimpleGraph<String,MapAttribute> serialize() {
+		this.sg= new SerializableSimpleGraph<String,MapAttribute>();
+		Iterator<Node> iter=this.g.iterator();
+		while(iter.hasNext()){
+			Node n=iter.next();
+			sg.addNode(n.getId(),MapAttribute.open);
+		}
+		Iterator<Edge> iterE=this.g.edges().iterator();
+		while (iterE.hasNext()){
+			Edge e=iterE.next();
+			Node sn=e.getSourceNode();
+			Node tn=e.getTargetNode();
+			sg.addEdge(e.getId(), sn.getId(), tn.getId());
+		}
+		return sg;
+	}
+	
+	public void merge(SerializableSimpleGraph<String,MapAttribute> sg){
+		for(SerializableNode<String, MapAttribute> node : sg.getAllNodes()) {
+			if(node.getNodeContent() == MapAttribute.closed) {
+				addNode(node.getNodeId(), node.getNodeContent());
+				for(String s : sg.getEdges(node.getNodeId())) {
+//					addEdge(s, );
+					System.out.println("EDGES: "+s);
+				}
+			}else{
+				
+			}
+		}
+	}
+	
 	/**
 	 * After migration we load the serialized data and recreate the non serializable components (Gui,..)
 	 */

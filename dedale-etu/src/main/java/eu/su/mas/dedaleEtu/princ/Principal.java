@@ -376,6 +376,11 @@ public class Principal {
 //	
 	
 		
+		List<String> names = new ArrayList<String>();
+		for(int i=0; i<2; i++) {
+			names.add("Explo"+((Integer)i).toString());
+		}
+		
 		/*********
 		 * AGENT Explo1
 		 *********/
@@ -387,7 +392,7 @@ public class Principal {
 		agentName="Explo1";
 		
 		//3) If you want to give specific parameters to your agent, add them here
-		Object [] entityParametersExplo1={"My parameters"};
+		Object [] entityParametersExplo1={names};
 		
 		//4) Give the class name of your agent to let the system instantiate it
 		ag=createNewDedaleAgent(c, agentName, ExploreMultiAgent.class.getName(), entityParametersExplo1);//
@@ -404,7 +409,7 @@ public class Principal {
 		agentName="Explo2";
 		
 		//3) If you want to give specific parameters to your agent, add them here
-		Object [] entityParametersExplo2={"My parameters"};
+		Object [] entityParametersExplo2={names};
 		
 		//4) Give the class name of your agent to let the system instantiate it
 		ag=createNewDedaleAgent(c, agentName, ExploreMultiAgent.class.getName(), entityParametersExplo2);//ExploreSoloAgent

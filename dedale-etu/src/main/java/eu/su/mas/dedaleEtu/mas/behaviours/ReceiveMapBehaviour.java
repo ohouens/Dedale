@@ -1,0 +1,42 @@
+package eu.su.mas.dedaleEtu.mas.behaviours;
+
+import dataStructures.serializableGraph.SerializableSimpleGraph;
+import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
+import jade.core.behaviours.SimpleBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+
+public class ReceiveMapBehaviour extends SimpleBehaviour{
+	private boolean finished=false;
+	private MapRepresentation myMap;
+	
+	public ReceiveMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
+		super(myAgent);
+		this.myMap = myMap;
+	}
+	
+	public void action() {
+		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
+		ACLMessage msgMap = myAgent.receive(mt);
+		if(msgMap != null) {
+			SerializableSimpleGraph<String,MapAttribute> inter;
+			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
+			try {
+				inter = (SerializableSimpleGraph<String,MapAttribute>) msgMap.getContentObject();
+				myMap.merge(inter);
+			} catch (UnreadableException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public boolean done() {
+		return finished;
+	}
+}

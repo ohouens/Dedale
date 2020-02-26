@@ -9,11 +9,10 @@ import java.util.Set;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.SimpleBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class ExploMultiBehaviour extends SimpleBehaviour{
 
@@ -26,9 +25,8 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 	private boolean finished = false;
 	private List<String> openNodes;
 	private Set<String> closedNodes;
-	private String position="";
 	
-	public ExploMultiBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
+	public ExploMultiBehaviour(final ExploreMultiAgent myAgent, MapRepresentation myMap) {
 		super(myAgent);
 		this.myMap=myMap;
 		this.openNodes=new ArrayList<String>();
@@ -37,18 +35,12 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
-		position="";
-		MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-		ACLMessage msg = myAgent.receive(msgTemplate);
-		if(msg != null) {
-			System.out.println(myAgent.getLocalName()+" RECEIVE POSITION "+msg.getContent());
-			position = msg.getContent();
-		}
 		
 		if(this.myMap==null)
 			this.myMap= new MapRepresentation();
 		
 		//0) Retrieve the current position
+		System.out.println(((AbstractDedaleAgent)this.myAgent).getCurrentPosition());
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 	
 		if (myPosition!=null){
@@ -85,7 +77,6 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 						this.myMap.addEdge(myPosition, nodeId);
 					}
 					if (nextNode==null) nextNode=nodeId;
-					if (nextNode.equals(position)) nextNode=null;
 				}
 			}
 
@@ -102,12 +93,6 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
 					nextNode=this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
-					Iterator<Couple<String, List<Couple<Observation, Integer>>>> iterBis=lobs.iterator();
-//					System.out.println(position+" EQUAAALS "+nextNode);
-					while(iterBis.hasNext() && position.equals(nextNode)) {
-//						System.out.println(position+" EQUAAAAAALS "+nextNode);
-						nextNode = iterBis.next().getLeft();
-					}
 				}
 				
 				
@@ -161,7 +146,13 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 				/************************************************
 				 * 				END API CALL ILUSTRATION
 				 *************************************************/
-				((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
+				ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
+				if(agent.getRole() == 0) {
+					agent.setNextPosition(nextNode);
+					agent.move();
+				}else {
+					System.out.println(myAgent.getLocalName()+" - "+"ROLE CHANGED CANNOT EXPLORE ! Code: "+agent.getRole());
+				}
 			}
 
 		}
