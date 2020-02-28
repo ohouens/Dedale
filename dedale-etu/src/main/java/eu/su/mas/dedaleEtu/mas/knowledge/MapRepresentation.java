@@ -171,19 +171,40 @@ public class MapRepresentation implements Serializable {
 		return sg;
 	}
 	
-	public void merge(SerializableSimpleGraph<String,MapAttribute> sg){
-		for(SerializableNode<String, MapAttribute> node : sg.getAllNodes()) {
-			if(node.getNodeContent() == MapAttribute.closed) {
-				addNode(node.getNodeId(), node.getNodeContent());
-				for(String s : sg.getEdges(node.getNodeId())) {
-//					addEdge(s, );
-					System.out.println("EDGES: "+s);
+	public MapRepresentation merge(SerializableSimpleGraph<String, MapAttribute> sg) {
+		MapRepresentation mergedMap = this;
+		ArrayList<String> listNodes = new ArrayList<>();
+		ArrayList<String> listEdges = new ArrayList<>();		
+		
+		Iterator<Edge> iterE=this.g.edges().iterator();
+		Iterator<Node> iterN=this.g.nodes().iterator();
+		
+		while (iterN.hasNext()){
+			Node n = iterN.next();
+			listNodes.add(n.getId());
+		}
+		
+		while (iterE.hasNext()){
+			Edge e = iterE.next();
+			listEdges.add(e.getId());
+		}
+		
+		for (SerializableNode<String, MapAttribute> n: sg.getAllNodes()) {
+			if (!(listNodes.contains(n.getNodeId()))){
+				mergedMap.addNode(n.getNodeId(), MapAttribute.closed);
+				if(n.getNodeId() != null && sg.getEdges(n.getNodeId()) != null) {
+					for (String s: sg.getEdges(n.getNodeId())) {
+						if (!listEdges.contains(s)) {
+							mergedMap.addEdge(n.getNodeId(), s);
+						}
+					}
 				}
-			}else{
-				
 			}
 		}
+		
+		return mergedMap;
 	}
+
 	
 	/**
 	 * After migration we load the serialized data and recreate the non serializable components (Gui,..)

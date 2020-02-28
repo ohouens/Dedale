@@ -377,7 +377,7 @@ public class Principal {
 	
 		
 		List<String> names = new ArrayList<String>();
-		for(int i=0; i<2; i++) {
+		for(int i=1; i<=2; i++) {
 			names.add("Explo"+((Integer)i).toString());
 		}
 		

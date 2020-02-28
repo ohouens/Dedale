@@ -4,6 +4,7 @@ import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.SimpleBehaviour;
@@ -21,14 +22,20 @@ public class ReceiveMapBehaviour extends SimpleBehaviour{
 	}
 	
 	public void action() {
+		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
 		ACLMessage msgMap = myAgent.receive(mt);
 		if(msgMap != null) {
+			if(myMap == null) {
+				myMap = agent.getMap();
+				return;
+			}
 			SerializableSimpleGraph<String,MapAttribute> inter;
 			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
 			try {
 				inter = (SerializableSimpleGraph<String,MapAttribute>) msgMap.getContentObject();
 				myMap.merge(inter);
+				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}

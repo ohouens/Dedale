@@ -35,12 +35,14 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
+		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
+		System.out.println(agent.getLocalName()+" - AGent map "+ Boolean.toString(agent.getMap()!=null));
 		
 		if(this.myMap==null)
 			this.myMap= new MapRepresentation();
+			agent.setMap(myMap);
 		
 		//0) Retrieve the current position
-		System.out.println(((AbstractDedaleAgent)this.myAgent).getCurrentPosition());
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 	
 		if (myPosition!=null){
@@ -146,7 +148,6 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 				/************************************************
 				 * 				END API CALL ILUSTRATION
 				 *************************************************/
-				ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 				if(agent.getRole() == 0) {
 					agent.setNextPosition(nextNode);
 					agent.move();

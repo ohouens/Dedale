@@ -30,6 +30,7 @@ public class ReceivePositionBehaviour extends SimpleBehaviour{
 	
 	@Override
 	public void action() {
+		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
 		MessageTemplate msgTemplate = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 		ACLMessage msg = myAgent.receive(msgTemplate);
 		if(msg != null) {
@@ -50,7 +51,6 @@ public class ReceivePositionBehaviour extends SimpleBehaviour{
 			/************************************************
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
-			ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 			if(nextNode != null) {
 				agent.setNextPosition(nextNode);
 				System.out.println("current:"+currentPosition+", next:"+nextNode);

@@ -6,8 +6,10 @@ import java.util.List;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.ReceiveMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceivePositionBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHello;
+import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendPosition;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.behaviours.Behaviour;
@@ -32,7 +34,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
 		List<String> agents = new ArrayList<String>();
-		for(int i=0; i<2; i++) {
+		for(int i=1; i<=2; i++) {
 			agents.add("Explo"+((Integer)i).toString());
 		}
 		/************************************************
@@ -42,9 +44,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		 ************************************************/
 
 		lb.add(new ExploMultiBehaviour(this,this.myMap));//0
-		lb.add(new SendPosition(this, agents));//1
-		lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
-		
+//		lb.add(new SendPosition(this, agents));//1
+//		lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
+		lb.add(new SendMapBehaviour(this, this.myMap, agents));
+		lb.add(new ReceiveMapBehaviour(this, this.myMap));
 		
 		/***
 		 * MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
@@ -75,5 +78,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void move() {
 		((AbstractDedaleAgent)this).moveTo(nextPosition);
+	}
+	
+	public MapRepresentation getMap() {
+		return myMap;
+	}
+	
+	public void setMap(MapRepresentation map) {
+		myMap = map;
 	}
 }
