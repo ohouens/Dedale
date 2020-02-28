@@ -1,10 +1,12 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceiveMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceivePositionBehaviour;
@@ -13,6 +15,10 @@ import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendPosition;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.behaviours.Behaviour;
+import jade.tools.sniffer.Agent;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
 
 public class ExploreMultiAgent extends AbstractDedaleAgent{
 
@@ -33,10 +39,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
+		/*
 		List<String> agents = new ArrayList<String>();
 		for(int i=1; i<=2; i++) {
 			agents.add("Explo"+((Integer)i).toString());
 		}
+		*/
+		List<String> agents = getListAgents();
 		/************************************************
 		 * 
 		 * ADD the behaviours of the Dummy Moving Agent
@@ -44,8 +53,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		 ************************************************/
 
 		lb.add(new ExploMultiBehaviour(this,this.myMap));//0
-		lb.add(new SendPosition(this, agents));//1
-		lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
+		//lb.add(new SendPosition(this, agents));//1
+		//lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
 		lb.add(new SendMapBehaviour(this, this.myMap, agents));
 		lb.add(new ReceiveMapBehaviour(this, this.myMap));
 		
@@ -86,5 +95,33 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void setMap(MapRepresentation map) {
 		myMap = map;
+	}
+	
+	public List<String> getListAgents() {
+		List<String> agents = new ArrayList<>();
+		
+		DFAgentDescription dfd = new DFAgentDescription();
+	    dfd.setName(getAID());
+	    ServiceDescription sd = new ServiceDescription();
+	    sd.setType("");
+	    sd.setName(getLocalName());
+
+	    dfd.addServices(sd);
+	    try {
+	        DFService.register(this, dfd);
+	    }catch(FIPAException fe){}
+
+	    try {
+		    DFAgentDescription[] result = DFService.search(this, dfd);
+		    if (result.length > 0) {
+		    	for (int i = 0; i < result.length; i++) {
+		    		agents.add(getAID().getLocalName());
+		    		System.out.println(getAID().getLocalName());
+		    	}
+		    	
+		    }
+	    }catch(FIPAException fe) {}
+	    
+	    return agents;
 	}
 }
