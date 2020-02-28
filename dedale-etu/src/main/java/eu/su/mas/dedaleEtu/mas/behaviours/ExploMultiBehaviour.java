@@ -36,7 +36,6 @@ public class ExploMultiBehaviour extends SimpleBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		System.out.println(agent.getLocalName()+" - AGent map "+ Boolean.toString(agent.getMap()!=null));
 		
 		if(this.myMap==null)
 			this.myMap= new MapRepresentation();

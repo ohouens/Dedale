@@ -29,6 +29,7 @@ public class SendMapBehaviour extends SimpleBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
+//		if(agent.getLocalName().equals("Explo1"))return;
 		if(myMap == null) {
 			myMap = agent.getMap();
 			return;

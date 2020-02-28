@@ -44,8 +44,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		 ************************************************/
 
 		lb.add(new ExploMultiBehaviour(this,this.myMap));//0
-//		lb.add(new SendPosition(this, agents));//1
-//		lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
+		lb.add(new SendPosition(this, agents));//1
+		lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
 		lb.add(new SendMapBehaviour(this, this.myMap, agents));
 		lb.add(new ReceiveMapBehaviour(this, this.myMap));
 		

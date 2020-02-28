@@ -191,17 +191,16 @@ public class MapRepresentation implements Serializable {
 		
 		for (SerializableNode<String, MapAttribute> n: sg.getAllNodes()) {
 			if (!(listNodes.contains(n.getNodeId()))){
-				mergedMap.addNode(n.getNodeId(), MapAttribute.closed);
-				if(n.getNodeId() != null && sg.getEdges(n.getNodeId()) != null) {
+				if(!listNodes.contains(n.getNodeId()))
+					mergedMap.addNode(n.getNodeId(), n.getNodeContent());
+				if(listNodes.contains(n.getNodeId()) && n.getNodeContent().equals(MapAttribute.closed)) {
+					mergedMap.addNode(n.getNodeId(), n.getNodeContent());
 					for (String s: sg.getEdges(n.getNodeId())) {
-						if (!listEdges.contains(s)) {
-							mergedMap.addEdge(n.getNodeId(), s);
-						}
+						mergedMap.addEdge(n.getNodeId(), s);
 					}
 				}
 			}
 		}
-		
 		return mergedMap;
 	}
 
