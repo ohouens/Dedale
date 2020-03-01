@@ -27,6 +27,7 @@ public class SendPosition extends TickerBehaviour{
 		super(myagent, 3000);
 		//super(myagent);
 		this.agentNames = agentNames;
+		
 	}
 
 	@Override

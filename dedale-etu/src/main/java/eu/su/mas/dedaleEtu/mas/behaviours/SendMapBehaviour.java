@@ -10,6 +10,7 @@ import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class SendMapBehaviour extends SimpleBehaviour{
 	/**
@@ -29,24 +30,30 @@ public class SendMapBehaviour extends SimpleBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
-//		if(agent.getLocalName().equals("Explo1"))return;
-		if(myMap == null) {
-			myMap = agent.getMap();
-			return;
-		}
-		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
-		sendMap.setSender(myAgent.getAID());
-		for(String s : receivers) {
-			if(!s.equals(myAgent.getLocalName())) {
-				sendMap.addReceiver(new AID(s,AID.ISLOCALNAME));
+		MessageTemplate template = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
+		ACLMessage ackPing = agent.receive(template);
+		if(ackPing != null) {
+			agent.setRole(2);
+			System.out.println(agent.getLocalName()+" - ACK PING receive, SEND MAP TO "+ackPing.getSender().getLocalName());
+			if(agent.getLocalName().equals("Explo1"))return;
+			if(myMap == null) {
+				myMap = agent.getMap();
+				return;
 			}
-		}
-		try {
-			System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
-			sendMap.setContentObject(myMap.serialize());
-			((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
-		} catch (IOException e) {
-			e.printStackTrace();
+			ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
+			sendMap.setSender(myAgent.getAID());
+			for(String s : receivers) {
+				if(!s.equals(myAgent.getLocalName())) {
+					sendMap.addReceiver(new AID(s,AID.ISLOCALNAME));
+				}
+			}
+			try {
+				System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
+				sendMap.setContentObject(myMap.serialize());
+				((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

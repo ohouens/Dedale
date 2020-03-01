@@ -36,6 +36,12 @@ public class ReceiveMapBehaviour extends SimpleBehaviour{
 				inter = (SerializableSimpleGraph<String,MapAttribute>) msgMap.getContentObject();
 				myMap.merge(inter);
 				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
+				agent.setRole(-10);
+				ACLMessage itOK = new ACLMessage(ACLMessage.CONFIRM);
+				itOK.setSender(agent.getAID());
+				itOK.addReceiver(msgMap.getSender());
+				itOK.setContent("IT's OKOKOKOKOKOK");
+				agent.sendMessage(itOK);
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}

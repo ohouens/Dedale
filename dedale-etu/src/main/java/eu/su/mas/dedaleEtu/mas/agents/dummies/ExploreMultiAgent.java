@@ -7,7 +7,9 @@ import java.util.List;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import eu.su.mas.dedaleEtu.mas.behaviours.AckPingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.PingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceiveMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceivePositionBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHello;
@@ -39,24 +41,26 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
-		/*
+		
 		List<String> agents = new ArrayList<String>();
 		for(int i=1; i<=2; i++) {
 			agents.add("Explo"+((Integer)i).toString());
 		}
-		*/
-		List<String> agents = getListAgents();
+		
+		//List<String> agents = getListAgents();
 		/************************************************
 		 * 
 		 * ADD the behaviours of the Dummy Moving Agent
 		 * 
 		 ************************************************/
 
-		lb.add(new ExploMultiBehaviour(this,this.myMap));//0
-		//lb.add(new SendPosition(this, agents));//1
-		//lb.add(new ReceivePositionBehaviour(this, this.myMap));//2
+		lb.add(new ExploMultiBehaviour(this,this.myMap));
+//		lb.add(new SendPosition(this, agents));
+//		lb.add(new ReceivePositionBehaviour(this, this.myMap));
 		lb.add(new SendMapBehaviour(this, this.myMap, agents));
 		lb.add(new ReceiveMapBehaviour(this, this.myMap));
+		lb.add(new AckPingMapBehaviour(this));
+		lb.add(new PingMapBehaviour(this, agents));
 		
 		/***
 		 * MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
@@ -115,12 +119,12 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		    DFAgentDescription[] result = DFService.search(this, dfd);
 		    if (result.length > 0) {
 		    	for (int i = 0; i < result.length; i++) {
-		    		agents.add(getAID().getLocalName());
-		    		System.out.println(getAID().getLocalName());
+		    		agents.add(result[i].getName().getLocalName());
+		    		System.out.println(this.getLocalName()+" FOUND AGENT "+result[i].getName().getLocalName());
 		    	}
 		    	
 		    }
-	    }catch(FIPAException fe) {}
+	    }catch(FIPAException fe) {fe.printStackTrace();}
 	    
 	    return agents;
 	}
