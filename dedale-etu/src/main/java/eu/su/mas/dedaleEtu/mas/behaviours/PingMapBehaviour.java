@@ -13,16 +13,16 @@ public class PingMapBehaviour extends TickerBehaviour{
 	
 	private List<String> agents;
 	
-	public PingMapBehaviour(final AbstractDedaleAgent myAgent, List<String> agents) {
+	public PingMapBehaviour(final AbstractDedaleAgent myAgent) {
 		super(myAgent, 3000);
-		this.agents = agents;
-		this.agents.remove(myAgent.getLocalName());
 	}
 
 	private static final long serialVersionUID = 8094154711157901076L;
 
 	@Override
 	protected void onTick() {
+		this.agents = ((ExploreMultiAgent) myAgent).getListAgents();
+		this.agents.remove(myAgent.getLocalName());
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		if(agent.getRole() >= 0) {
 			ACLMessage ping = new ACLMessage(ACLMessage.REQUEST);

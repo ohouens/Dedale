@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -9,6 +10,10 @@ import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -21,14 +26,17 @@ public class SendMapBehaviour extends SimpleBehaviour{
 	private List<String> receivers;
 	private boolean finished=false;
 
-	public SendMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap, List<String> receivers) {
+	public SendMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
 		super(myAgent);
 		this.myMap = myMap;
-		this.receivers = receivers;
 	}
 	
 	@Override
 	public void action() {
+		
+List<String> agents = new ArrayList<>();
+		this.receivers = ((ExploreMultiAgent) myAgent).getListAgents();
+		this.receivers.remove(myAgent.getLocalName());
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
 		MessageTemplate template = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		ACLMessage ackPing = agent.receive(template);
@@ -43,9 +51,7 @@ public class SendMapBehaviour extends SimpleBehaviour{
 			ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
 			sendMap.setSender(myAgent.getAID());
 			for(String s : receivers) {
-				if(!s.equals(myAgent.getLocalName())) {
-					sendMap.addReceiver(new AID(s,AID.ISLOCALNAME));
-				}
+				sendMap.addReceiver(new AID(s,AID.ISLOCALNAME));
 			}
 			try {
 				System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");

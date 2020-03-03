@@ -42,12 +42,28 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		List<Behaviour> lb=new ArrayList<Behaviour>();
 		
 		
-		List<String> agents = new ArrayList<String>();
-		for(int i=1; i<=2; i++) {
-			agents.add("Explo"+((Integer)i).toString());
-		}
+		//List<String> agents = new ArrayList<String>();
+		//for(int i=1; i<=2; i++) {
+		//	agents.add("Explo"+((Integer)i).toString());
+		//}
 		
-		//List<String> agents = getListAgents();
+		/********
+		 * Registration on the DF
+		 ********/
+		
+		DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName( getAID() ); 
+        ServiceDescription sd  = new ServiceDescription();
+        sd.setType( "Explo" );
+        sd.setName(getLocalName());
+        dfd.addServices(sd);
+        
+        try {  
+            DFService.register(this,dfd);
+            System.out.println("The agent "+ getLocalName() + " has been registered");
+        }
+        catch (FIPAException fe) { fe.printStackTrace(); }
+		
 		/************************************************
 		 * 
 		 * ADD the behaviours of the Dummy Moving Agent
@@ -57,10 +73,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		lb.add(new ExploMultiBehaviour(this,this.myMap));
 //		lb.add(new SendPosition(this, agents));
 //		lb.add(new ReceivePositionBehaviour(this, this.myMap));
-		lb.add(new SendMapBehaviour(this, this.myMap, agents));
+		lb.add(new SendMapBehaviour(this, this.myMap));
 		lb.add(new ReceiveMapBehaviour(this, this.myMap));
-		lb.add(new AckPingMapBehaviour(this));
-		lb.add(new PingMapBehaviour(this, agents));
+		//lb.add(new AckPingMapBehaviour(this));
+		//lb.add(new PingMapBehaviour(this));
 		
 		/***
 		 * MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
@@ -105,16 +121,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		List<String> agents = new ArrayList<>();
 		
 		DFAgentDescription dfd = new DFAgentDescription();
-	    dfd.setName(getAID());
+	    //dfd.setName(getAID());
 	    ServiceDescription sd = new ServiceDescription();
-	    sd.setType("");
-	    sd.setName(getLocalName());
+	    //sd.setType("Explo");
+	    //sd.setName(getLocalName());
 
 	    dfd.addServices(sd);
-	    try {
-	        DFService.register(this, dfd);
-	    }catch(FIPAException fe){}
-
+	    
 	    try {
 		    DFAgentDescription[] result = DFService.search(this, dfd);
 		    if (result.length > 0) {
