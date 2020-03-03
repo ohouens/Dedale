@@ -17,6 +17,8 @@ import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendPosition;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.ParallelBehaviour;
 import jade.tools.sniffer.Agent;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
@@ -29,8 +31,6 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	 */
 	private static final long serialVersionUID = -8829443829282917888L;
 	private MapRepresentation myMap;
-	private int role=0;
-	private String nextPosition="";
 	
 	public void setup() {
 		super.setup();
@@ -54,43 +54,45 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		 * 
 		 ************************************************/
 
-		lb.add(new ExploMultiBehaviour(this,this.myMap));
-//		lb.add(new SendPosition(this, agents));
-//		lb.add(new ReceivePositionBehaviour(this, this.myMap));
-		lb.add(new SendMapBehaviour(this, this.myMap, agents));
-		lb.add(new ReceiveMapBehaviour(this, this.myMap));
-		lb.add(new AckPingMapBehaviour(this));
-		lb.add(new PingMapBehaviour(this, agents));
+		FSMBehaviour fsm = new FSMBehaviour(this) {
+			public int onEnd() {
+				System.out.println("FSM behaviour terminé");
+				myAgent.doDelete();
+				return super.onEnd();
+			}
+		};
+		
+		fsm.registerFirstState(new ExploMultiBehaviour(this,this.myMap), "Explo");
+		fsm.registerState(new PingMapBehaviour(this, agents), "PingMap");
+		fsm.registerState(new AckPingMapBehaviour(this), "AckPingMap");
+		fsm.registerState(new SendMapBehaviour(this, this.myMap, agents, false), "SendMap");
+		fsm.registerState(new ReceiveMapBehaviour(this, this.myMap, true), "ReceiveMap");
+		fsm.registerState(new ReceiveMapBehaviour(this, this.myMap, false), "ReceiveMapBis");
+		fsm.registerState(new SendMapBehaviour(this, this.myMap, agents, true), "SendMapBis");
+		
+		fsm.registerTransition("Explo", "PingMap", 0);
+		fsm.registerTransition("Explo", "SendMapBis", 1);
+		fsm.registerTransition("PingMap", "Explo", 0);
+		fsm.registerTransition("PingMap", "AckPingMap", 1);
+		fsm.registerTransition("AckPingMap", "Explo", 0);
+		fsm.registerTransition("AckPingMap", "ReceiveMap", 1);
+		fsm.registerTransition("ReceiveMap", "Explo", 0);
+		fsm.registerTransition("ReceiveMap", "SendMap", 1);
+		fsm.registerTransition("SendMap", "SendMap", 0);
+		fsm.registerTransition("SendMap", "Explo", 1);
+		fsm.registerTransition("SendMapBis", "SendMapBis", 0);
+		fsm.registerTransition("SendMapBis", "ReceiveMapBis", 1);
+		fsm.registerTransition("ReceiveMapBis", "Explo", 0);
+		fsm.registerTransition("ReceiveMapBis", "Explo", 1);
+		
+		lb.add(fsm);
 		
 		/***
 		 * MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
 		 */
-		
-		
-		addBehaviour(new startMyBehaviours(this,lb));
+		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
-	}
-	
-	
-	public int getRole() {
-		return role;
-	}
-	
-	public String getNextPosition() {
-		return nextPosition;
-	}
-	
-	public void setRole(int i) {
-		role = i;
-	}
-	
-	public void setNextPosition(String s) {
-		nextPosition = s;
-	}
-	
-	public void move() {
-		((AbstractDedaleAgent)this).moveTo(nextPosition);
 	}
 	
 	public MapRepresentation getMap() {

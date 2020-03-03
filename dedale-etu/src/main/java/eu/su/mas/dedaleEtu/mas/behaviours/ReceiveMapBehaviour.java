@@ -1,24 +1,29 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import dataStructures.serializableGraph.SerializableSimpleGraph;
-import dataStructures.tuple.Couple;
-import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
-import jade.core.behaviours.SimpleBehaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
-public class ReceiveMapBehaviour extends SimpleBehaviour{
-	private boolean finished=false;
+public class ReceiveMapBehaviour extends OneShotBehaviour{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1495684385089527428L;
 	private MapRepresentation myMap;
+	private int transition = 0;
+	private boolean sendMergedMap;
 	
-	public ReceiveMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
+	public ReceiveMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap, boolean sendMergedMap) {
 		super(myAgent);
 		this.myMap = myMap;
+		this.sendMergedMap = sendMergedMap;
 	}
 	
 	public void action() {
@@ -26,9 +31,14 @@ public class ReceiveMapBehaviour extends SimpleBehaviour{
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
 		ACLMessage msgMap = myAgent.receive(mt);
 		if(msgMap != null) {
+			transition = 1;
+			if(sendMergedMap)
+				System.out.println(agent.getLocalName()+" - transition from RECEIVEMAP to SendMap");
+			else
+				System.out.println(agent.getLocalName()+" - transition from RECEIVEMAP to Explo");
 			if(myMap == null) {
+				System.out.println(agent.getLocalName()+" - Petit probleme de map");
 				myMap = agent.getMap();
-				return;
 			}
 			SerializableSimpleGraph<String,MapAttribute> inter;
 			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
@@ -36,20 +46,14 @@ public class ReceiveMapBehaviour extends SimpleBehaviour{
 				inter = (SerializableSimpleGraph<String,MapAttribute>) msgMap.getContentObject();
 				myMap.merge(inter);
 				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
-				agent.setRole(-10);
-				ACLMessage itOK = new ACLMessage(ACLMessage.CONFIRM);
-				itOK.setSender(agent.getAID());
-				itOK.addReceiver(msgMap.getSender());
-				itOK.setContent("IT's OKOKOKOKOKOK");
-				agent.sendMessage(itOK);
 			} catch (UnreadableException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 	@Override
-	public boolean done() {
-		return finished;
+	public int onEnd() {
+		return transition;
 	}
 }
