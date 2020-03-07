@@ -1,15 +1,14 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.util.Date;
 import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
 public class PingMapBehaviour extends OneShotBehaviour{
 	
@@ -28,13 +27,8 @@ public class PingMapBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		MessageTemplate tp = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-		ACLMessage testPing = agent.receive(tp);
-		if(testPing != null) {
-			transition = 1;
-			System.out.println(agent.getLocalName()+" - transition to ACKPING");
-			return;
-		}
+		if(agent.getMap() == null)
+			agent.setMap(new MapRepresentation());
 		
 		ACLMessage ping = new ACLMessage(ACLMessage.REQUEST);
 		ping.setSender(myAgent.getAID());
@@ -42,10 +36,14 @@ public class PingMapBehaviour extends OneShotBehaviour{
 			ping.addReceiver(new AID(s, AID.ISLOCALNAME));
 			System.out.println("addReceiver ::: "+s);
 		}
-		ping.setContent("WANT MY MAP ?");
+		Date date= new Date();
+		long time = date.getTime();
+		ping.setContent(String.valueOf(time));
+//		ping.setContent("WANT MY MAP ?");
+		agent.setLastSend(ping);
 		myAgent.send(ping);
 		System.out.println(myAgent.getLocalName()+" - ACK");
-		System.out.println(agent.getLocalName()+" - transition to EXPLO");
+		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 	
 	@Override

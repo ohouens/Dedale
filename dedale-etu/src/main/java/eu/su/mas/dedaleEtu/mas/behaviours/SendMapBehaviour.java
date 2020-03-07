@@ -18,41 +18,36 @@ public class SendMapBehaviour extends OneShotBehaviour{
 	 */
 	private static final long serialVersionUID = 2606822683718779669L;
 	private MapRepresentation myMap;
-	private List<String> receivers;
-	private boolean finished=false;
 	private int transition = 0;
-	private boolean receiveMerged;
+	private boolean original;
 
-	public SendMapBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap, List<String> receivers, boolean receiveMerged) {
+	public SendMapBehaviour(final AbstractDedaleAgent myAgent, boolean original) {
 		super(myAgent);
-		this.myMap = myMap;
-		this.receivers = receivers;
-		this.receiveMerged = receiveMerged;
+		this.original = original;
 	}
 	
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
-		if(myMap == null) {
-			System.out.println("Petit probleme de map ici");
-			myMap = agent.getMap();
+		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+		ACLMessage checkDone = agent.receive(mt);
+		if(checkDone != null) {
+			transition = 1;
+			if(original)
+				System.out.println(agent.getLocalName()+" - transition to ReceiveFusedMAP");
+			else
+				System.out.println(agent.getLocalName()+" - transition to Exploration");
+			return;
 		}
+		
+		myMap = agent.getMap();
 		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
 		sendMap.setSender(myAgent.getAID());
-		for(String s : receivers) {
-			if(!s.equals(myAgent.getLocalName())) {
-				sendMap.addReceiver(new AID(s,AID.ISLOCALNAME));
-			}
-		}
+		sendMap.addReceiver(agent.getLastReceive().getSender());
 		try {
 			System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
 			sendMap.setContentObject(myMap.serialize());
 			((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
-			transition = 1;
-			if(receiveMerged)
-				System.out.println(agent.getLocalName()+" - transition to RECEIVEMAP");
-			else
-				System.out.println(agent.getLocalName()+" - transition to Explo");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -25,14 +25,13 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	private static final long serialVersionUID = 5631327286239419149L;
 	
 	private MapRepresentation myMap;
-	private boolean finished = false;
+	private boolean finished=false;
 	private List<String> openNodes;
 	private Set<String> closedNodes;
 	private int transition = 0;
 	
-	public ExploMultiBehaviour(final ExploreMultiAgent myAgent, MapRepresentation myMap) {
+	public ExploMultiBehaviour(final ExploreMultiAgent myAgent) {
 		super(myAgent);
-		this.myMap=myMap;
 		this.openNodes=new ArrayList<String>();
 		this.closedNodes=new HashSet<String>();
 	}
@@ -41,18 +40,9 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		MessageTemplate tap = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
-		ACLMessage testAckPing = agent.receive(tap);
-		if(testAckPing != null) {
-			transition = 1;
-			System.out.println(agent.getLocalName()+" - transition to SENDMAP");
-			return;
-		}
-		
-		if(this.myMap==null) {
-			this.myMap= new MapRepresentation();
-			agent.setMap(myMap);
-		}
+		if(agent.getMap() == null)
+			agent.setMap(new MapRepresentation());
+		myMap = agent.getMap();
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
