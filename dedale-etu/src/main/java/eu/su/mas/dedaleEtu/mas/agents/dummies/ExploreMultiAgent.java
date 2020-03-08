@@ -1,7 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies;
 
 import java.util.ArrayList;
-
+import java.util.HashSet;
 import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -36,6 +36,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private MapRepresentation myMap;
 	private ACLMessage lastReceive;
 	private ACLMessage lastSend;
+	private HashSet<String> closedNodes;
 	
 	public void setup() {
 		super.setup();
@@ -135,6 +136,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		lastSend = last;
 	}
 	
+	public HashSet<String> getClosedNodes(){
+		return closedNodes;
+	}
+	
+	public void setClosedNodes(HashSet<String> cn) {
+		closedNodes = cn;
+	}
 	
 	public List<String> getListAgents() {
 		List<String> agents = new ArrayList<>();

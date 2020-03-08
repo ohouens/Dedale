@@ -1,14 +1,11 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
-import dataStructures.serializableGraph.SerializableSimpleGraph;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
-import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 
 public class ReceiveMapBehaviour extends OneShotBehaviour{
 	/**
@@ -31,21 +28,12 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 		if(msgMap != null) {
 			transition = 1;
 			myMap = agent.getMap();
-			SerializableSimpleGraph<String,MapAttribute> inter;
+			String inter;
 			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
-			
-			try {
-				inter = (SerializableSimpleGraph<String,MapAttribute>) msgMap.getContentObject();
-				if(original) {	
-					agent.setMap(myMap.merge(inter));
-					System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
-				}else{
-					MapRepresentation map = new MapRepresentation();
-					agent.setMap(map.merge(inter));
-				}
-			} catch (UnreadableException e) {
-				e.printStackTrace();
-			}
+			inter = msgMap.getContent();
+			myMap.merge(inter);
+			if(original)
+				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
 			ACLMessage ackMap = new ACLMessage(ACLMessage.CONFIRM);
 			ackMap.setSender(agent.getAID());
 			ackMap.addReceiver(msgMap.getSender());

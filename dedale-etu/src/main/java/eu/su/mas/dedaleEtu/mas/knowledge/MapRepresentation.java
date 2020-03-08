@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.knowledge;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -155,54 +156,52 @@ public class MapRepresentation implements Serializable {
 
 	}
 	
-	public SerializableSimpleGraph<String,MapAttribute> serialize() {
-		this.sg= new SerializableSimpleGraph<String,MapAttribute>();
+	public String serialize(HashSet<String> closedNodes) {
+		String result = "";
 		Iterator<Node> iter=this.g.iterator();
 		while(iter.hasNext()){
 			Node n=iter.next();
-			sg.addNode(n.getId(),MapAttribute.open);
+			if(closedNodes.contains(n.getId())) 
+				result += n.getId()+":closed,";
+			else
+				result += n.getId()+":open,";
 		}
+		
+		result += "|";
+		
 		Iterator<Edge> iterE=this.g.edges().iterator();
 		while (iterE.hasNext()){
 			Edge e=iterE.next();
 			Node sn=e.getSourceNode();
 			Node tn=e.getTargetNode();
-			sg.addEdge(e.getId(), sn.getId(), tn.getId());
+			result += sn.getId()+":"+tn.getId()+",";
 		}
-		return sg;
+//		System.out.println("result: "+result);
+		return result;
 	}
 	
-	public MapRepresentation merge(SerializableSimpleGraph<String, MapAttribute> sg) {
-		MapRepresentation mergedMap = this;
-		ArrayList<String> listNodes = new ArrayList<>();
-		ArrayList<String> listEdges = new ArrayList<>();		
+	public void merge(String sm) {
+		String[] tab = sm.split("\\|");
+		String listNodes = tab[0];
+		String listEdges = tab[1];
+//		System.out.println("sssssm "+sm);
+//		System.out.println("nooooOOOdes "+listNodes);
+//		System.out.println("EeeeEEdge "+listEdges);
 		
-		Iterator<Edge> iterE=this.g.edges().iterator();
-		Iterator<Node> iterN=this.g.nodes().iterator();
-		
-		while (iterN.hasNext()){
-			Node n = iterN.next();
-			listNodes.add(n.getId());
-		}
-		
-		while (iterE.hasNext()){
-			Edge e = iterE.next();
-			listEdges.add(e.getId());
-		}
-		
-		for (SerializableNode<String, MapAttribute> n: sg.getAllNodes()) {
-			if (!(listNodes.contains(n.getNodeId()))){
-				if(!listNodes.contains(n.getNodeId()))
-					mergedMap.addNode(n.getNodeId(), n.getNodeContent());
-				if(listNodes.contains(n.getNodeId()) && n.getNodeContent().equals(MapAttribute.closed)) {
-					mergedMap.addNode(n.getNodeId(), n.getNodeContent());
-					for (String s: sg.getEdges(n.getNodeId())) {
-						mergedMap.addEdge(n.getNodeId(), s);
-					}
-				}
+		for(String node : listNodes.split(",")) {
+			if(!node.equals("")) {
+//				System.out.println("nooooode - "+node);
+				if(node.split(":")[1].equals("closed"))
+					addNode(node.split(":")[0], MapAttribute.closed);
+				else
+					addNode(node.split(":")[0], MapAttribute.open);
 			}
 		}
-		return mergedMap;
+		
+		for(String edge : listEdges.split(",")){
+			if(!edge.equals(""))
+				addEdge(edge.split(":")[0], edge.split(":")[1]);
+		}
 	}
 
 	

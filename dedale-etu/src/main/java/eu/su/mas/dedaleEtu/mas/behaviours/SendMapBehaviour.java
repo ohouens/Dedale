@@ -1,14 +1,9 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
-import java.io.IOException;
-import java.util.List;
-
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
-import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -44,13 +39,9 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
 		sendMap.setSender(myAgent.getAID());
 		sendMap.addReceiver(agent.getLastReceive().getSender());
-		try {
-			System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
-			sendMap.setContentObject(myMap.serialize());
-			((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sendMap.setContent(myMap.serialize(agent.getClosedNodes()));
+		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
+		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
 	}
 	
 	@Override

@@ -34,6 +34,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		super(myAgent);
 		this.openNodes=new ArrayList<String>();
 		this.closedNodes=new HashSet<String>();
+		((ExploreMultiAgent)myAgent).setClosedNodes((HashSet<String>) this.closedNodes);
 	}
 
 	@Override

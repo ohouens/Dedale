@@ -19,12 +19,24 @@ public class SynchronizationBehaviour extends OneShotBehaviour{
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		ACLMessage MPing = agent.getLastSend();
 		ACLMessage HPing = agent.getLastReceive();
-		if(Long.parseLong(HPing.getContent()) < Long.parseLong(MPing.getContent())) {
-			transition = 1;
-			System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
-			return;
+		transition = 0;
+		if(Long.parseLong(HPing.getContent()) == Long.parseLong(MPing.getContent())) {
+			String s1 = agent.getLocalName();
+			String s2 = HPing.getSender().getLocalName();
+			if(Integer.parseInt(s1.substring(s1.length() - 1)) < Integer.parseInt(s2.substring(s2.length() - 1))) {
+				transition = 1;
+				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
+				return;
+			}
+			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
+		}else {
+			if(Long.parseLong(HPing.getContent()) < Long.parseLong(MPing.getContent())) {
+				transition = 1;
+				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
+				return;
+			}
+			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
 		}
-		System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
 	}
 	
 	@Override
