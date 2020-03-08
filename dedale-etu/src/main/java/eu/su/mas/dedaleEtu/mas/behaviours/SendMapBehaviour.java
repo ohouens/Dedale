@@ -1,9 +1,18 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -23,6 +32,10 @@ public class SendMapBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
+		
+List<String> agents = new ArrayList<>();
+		this.receivers = ((ExploreMultiAgent) myAgent).getListAgents();
+		this.receivers.remove(myAgent.getLocalName());
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);

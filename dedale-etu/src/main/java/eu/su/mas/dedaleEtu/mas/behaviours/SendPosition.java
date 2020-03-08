@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
@@ -23,15 +24,16 @@ public class SendPosition extends TickerBehaviour{
 	 * @param myagent the agent who posses the behaviour
 	 *  
 	 */
-	public SendPosition (final Agent myagent, List<String> agentNames) {
+	public SendPosition (final Agent myagent) {
 		super(myagent, 3000);
 		//super(myagent);
-		this.agentNames = agentNames;
 		
 	}
 
 	@Override
 	public void onTick() {
+		this.agentNames = ((ExploreMultiAgent) myAgent).getListAgents();
+		this.agentNames.remove(myAgent.getLocalName());
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 
 		//A message is defined by : a performative, a sender, a set of receivers, (a protocol),(a content (and/or contentOBject))
