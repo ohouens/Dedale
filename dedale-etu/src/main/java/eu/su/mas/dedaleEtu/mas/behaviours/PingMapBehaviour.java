@@ -15,10 +15,8 @@ public class PingMapBehaviour extends OneShotBehaviour{
 	private List<String> agents;
 	private int transition = 0;
 	
-	public PingMapBehaviour(final AbstractDedaleAgent myAgent, List<String> agents) {
+	public PingMapBehaviour(final AbstractDedaleAgent myAgent) {
 		super(myAgent);
-		this.agents = agents;
-		this.agents.remove(myAgent.getLocalName());
 	}
 
 	private static final long serialVersionUID = 8094154711157901076L;
@@ -27,6 +25,8 @@ public class PingMapBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
+		agents = agent.getListAgents();
+		
 		if(agent.getMap() == null)
 			agent.setMap(new MapRepresentation());
 		
@@ -34,7 +34,7 @@ public class PingMapBehaviour extends OneShotBehaviour{
 		ping.setSender(myAgent.getAID());
 		for(String s : agents) {
 			ping.addReceiver(new AID(s, AID.ISLOCALNAME));
-			System.out.println("addReceiver ::: "+s);
+			System.out.println(agent.getLocalName()+" - addReceiver ::: "+s);
 		}
 		Date date= new Date();
 		long time = date.getTime();
@@ -42,7 +42,7 @@ public class PingMapBehaviour extends OneShotBehaviour{
 //		ping.setContent("WANT MY MAP ?");
 		agent.setLastSend(ping);
 		myAgent.send(ping);
-		System.out.println(myAgent.getLocalName()+" - ACK");
+		System.out.println(myAgent.getLocalName()+" - PING");
 		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 	

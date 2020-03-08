@@ -40,13 +40,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void setup() {
 		super.setup();
-
 		final Object[] args = getArguments();
-//		System.out.println(args[0].toString()+"AAAAA");
-//		List<String> agents =  (ArrayList<String>) args[0];
-		
 		List<Behaviour> lb=new ArrayList<Behaviour>();
-		
 		
 		//List<String> agents = new ArrayList<String>();
 		//for(int i=1; i<=2; i++) {
@@ -84,7 +79,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 			}
 		};
 
-		fsm.registerFirstState(new PingMapBehaviour(this, agents), "PingMap");
+		fsm.registerFirstState(new PingMapBehaviour(this), "PingMap");
 		fsm.registerState(new SwitchBehaviour(this), "Switch");
 		fsm.registerState(new SynchronizationBehaviour(this), "Synchronization");
 		fsm.registerState(new AckPingMapBehaviour(this), "AckPingMap");
@@ -174,8 +169,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		    DFAgentDescription[] result = DFService.search(this, dfd);
 		    if (result.length > 0) {
 		    	for (int i = 0; i < result.length; i++) {
-		    		agents.add(result[i].getName().getLocalName());
-		    		System.out.println(this.getLocalName()+" FOUND AGENT "+result[i].getName().getLocalName());
+		    		if(!result[i].getName().getLocalName().equals(getLocalName())) {
+			    		agents.add(result[i].getName().getLocalName());
+//			    		System.out.println(this.getLocalName()+" FOUND AGENT "+result[i].getName().getLocalName());
+		    		}
 		    	}
 		    	
 		    }
