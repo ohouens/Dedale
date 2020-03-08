@@ -193,8 +193,10 @@ public class MapRepresentation implements Serializable {
 //				System.out.println("nooooode - "+node);
 				if(node.split(":")[1].equals("closed"))
 					addNode(node.split(":")[0], MapAttribute.closed);
-				else
-					addNode(node.split(":")[0], MapAttribute.open);
+				else {
+					if(g.getNode(node.split(":")[0]) == null)
+						addNode(node.split(":")[0], MapAttribute.open);
+				}
 			}
 		}
 		
