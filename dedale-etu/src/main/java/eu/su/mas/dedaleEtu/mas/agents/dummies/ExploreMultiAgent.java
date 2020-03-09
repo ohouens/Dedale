@@ -37,6 +37,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private ACLMessage lastReceive;
 	private ACLMessage lastSend;
 	private HashSet<String> closedNodes;
+	private List<String> agents;
 	
 	public void setup() {
 		super.setup();
@@ -152,6 +153,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void setClosedNodes(HashSet<String> cn) {
 		closedNodes = cn;
+	}
+	
+	public List<String> getTeamates(){
+		return agents;
+	}
+	
+	public void setTeamates(List<String> tm) {
+		agents = tm;
 	}
 	
 	public List<String> getListAgents() {

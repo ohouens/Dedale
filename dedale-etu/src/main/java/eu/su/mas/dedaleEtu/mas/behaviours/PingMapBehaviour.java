@@ -12,7 +12,6 @@ import jade.lang.acl.ACLMessage;
 
 public class PingMapBehaviour extends OneShotBehaviour{
 	
-	private List<String> agents;
 	private int transition = 0;
 	
 	public PingMapBehaviour(final AbstractDedaleAgent myAgent) {
@@ -25,7 +24,9 @@ public class PingMapBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		agents = agent.getListAgents();
+		if(agent.getTeamates() == null)
+			agent.setTeamates(agent.getListAgents());
+		List<String>agents = agent.getTeamates();
 		
 		if(agent.getMap() == null)
 			agent.setMap(new MapRepresentation());

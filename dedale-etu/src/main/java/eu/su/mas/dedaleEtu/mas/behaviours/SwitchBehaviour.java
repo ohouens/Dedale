@@ -1,5 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.util.Date;
+
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import jade.core.behaviours.OneShotBehaviour;
@@ -24,7 +26,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 		ACLMessage testAckPing = agent.receive(tap);
 		if(testAckPing != null) {
 			transition = 2;
-			agent.setLastReceive(testAckPing);
+			agent.setLastReceive(testAckPing);			
 			System.out.println(agent.getLocalName()+" - transition to SYNCHRONIZATION");
 			return;
 		}
