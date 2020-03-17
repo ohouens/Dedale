@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent.State;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -42,8 +43,11 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			System.out.println(agent.getLocalName()+" - AckMap");
 			if(original)
 				System.out.println(agent.getLocalName()+" - transition to SendFusedMap");
-			else
+			else {
+				agent.changeState(State.rewind);
+				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
 				System.out.println(agent.getLocalName()+" - transition to Exploration");
+			}
 		}
 	}
 	

@@ -12,10 +12,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.AckPingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.PingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceiveMapBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.ReceivePositionBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHello;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SendPosition;
 import eu.su.mas.dedaleEtu.mas.behaviours.SwitchBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SynchronizationBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
@@ -47,7 +44,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int motionCounterMemory = 0;
 	private int lastShareMemory = 0;
 	private int lockCountdown = 0;
-	private State currentState;
+	private State currentState = State.explo;
 	private List<State> stateMemory = new ArrayList<>(Arrays.asList(State.explo));
 	
 	public void setup() {
@@ -117,7 +114,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0);
 		fsm.registerTransition("ReceiveFusedMap", "Exploration", 1);
 
-		fsm.registerTransition("Exploration", "PingMap", 0);
+		fsm.registerTransition("Exploration", "Exploration", 0);
+		fsm.registerTransition("Exploration", "PingMap", 1);
 		
 		lb.add(fsm);
 		
@@ -211,11 +209,11 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		return currentState;
 	}
 	
-	public void changeState(State i) {
-		stateMemory.add(currentState);
+	public void changeState(State s) {
+		stateMemory.add(s);
 		if(stateMemory.size() > MEMORYSIZE)
 			stateMemory.remove(0);
-		currentState = i;
+		currentState = s;
 	}
 	
 	public List<State> getStateMemory(){
@@ -228,11 +226,11 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public void printPositionMemory() {
-		System.out.println(getLocalName()+" - positionMemory: "+positionMemory);
+		System.out.println(getLocalName()+" - positionMemory:"+positionMemory);
 	}
 	
 	public void printStateMemory() {
-		System.out.println(getLocalName()+" - stateMemory:"+stateMemory);
+		System.out.println(getLocalName()+" - stateMemory:\t"+stateMemory);
 	}
 	
 	public List<String> getListAgents() {

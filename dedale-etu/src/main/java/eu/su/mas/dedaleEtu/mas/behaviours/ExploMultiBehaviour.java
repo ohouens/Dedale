@@ -27,7 +27,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	private MapRepresentation myMap;
 	private List<String> openNodes;
 	private Set<String> closedNodes;
-	private int transition = 0;
+	private int transition = 1;
 	
 	public ExploMultiBehaviour(final ExploreMultiAgent myAgent) {
 		super(myAgent);
@@ -46,7 +46,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
-		agent.updatePositionMemory(myPosition);
+		if(agent.getCurrentState() != ExploreMultiAgent.State.rewind)
+			agent.updatePositionMemory(myPosition);
 		agent.printMemory();
 		
 		if (myPosition!=null){
@@ -70,66 +71,96 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 
 			//2) get the surrounding nodes and, if not in closedNodes, add them to open nodes.
 			String nextNode=null;
-			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=lobs.iterator();
-			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
-			Boolean golemBlocked = false;
-			while(iter.hasNext()){
-				String nodeId=iter.next().getLeft();
-				if (!this.closedNodes.contains(nodeId)){
-					if (!this.openNodes.contains(nodeId)){
-						this.openNodes.add(nodeId);
-						this.myMap.addNode(nodeId, MapAttribute.open);
-						this.myMap.addEdge(myPosition, nodeId);	
-					}else{
-						//the node exist, but not necessarily the edge
-						this.myMap.addEdge(myPosition, nodeId);
+			
+			switch(agent.getCurrentState()) {
+				case rewind:
+					transition = 0;
+					if(agent.getLockCountdown() <= 0) {
+						agent.changeState(ExploreMultiAgent.State.explo);
+						return;
 					}
-					if (nextNode==null) nextNode=nodeId;
-				}
-			}
-
-			//3) while openNodes is not empty, continues.
-			if (this.openNodes.isEmpty() || golemBlocked){
-				//Explo finished
-				System.out.println("Exploration successufully done, behaviour removed.");
-			}else{
-				//4) select next move.
-				//4.1 If there exist one open node directly reachable, go for it,
-				//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
-				while (iter2.hasNext()) {
-					Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
-					List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
-					System.out.println("OBSERVATIONS: " + listObsInt);
-					for (int i = 0; i < listObsInt.size(); i++) {
-						if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-							System.out.println("I can smell the golem from here!");
-							String stenchPos = StrList.getLeft();
-							System.out.println("Odor position: " + stenchPos);
-							nextNode = stenchPos;
-							// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
-							// càd on doit verifier que la case où on veut aller est occupée
+					int size = agent.getPositionMemory().size();
+					if(size > 0) {
+						nextNode = agent.getPositionMemory().remove((int)size-1);
+						System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
+					}
+					agent.updateLC();
+					break;
+				case coalition:
+					System.out.println(
+							"Coalition TODO/\r\n" +
+							"Vamos pa' la playa, pa’ curarte el alma\r\n" + 
+							"Cierra la pantalla, abre la Medalla\r\n" + 
+							"Todo el mar Caribe, viendo tu cintura\r\n" + 
+							"Tú le coqueteas, tú eres busca bullas\r\n" + 
+							"Y me gusta"
+					);
+					break;
+				default:
+					transition = 1;
+					Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=lobs.iterator();
+					Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
+					Boolean golemBlocked = false;
+					while(iter.hasNext()){
+						String nodeId=iter.next().getLeft();
+						if (!this.closedNodes.contains(nodeId)){
+							if (!this.openNodes.contains(nodeId)){
+								this.openNodes.add(nodeId);
+								this.myMap.addNode(nodeId, MapAttribute.open);
+								this.myMap.addEdge(myPosition, nodeId);	
+							}else{
+								//the node exist, but not necessarily the edge
+								this.myMap.addEdge(myPosition, nodeId);
+							}
+							if (nextNode==null) nextNode=nodeId;
 						}
 					}
-				}
-
-				if (nextNode==null){
-					//no directly accessible openNode
-					//chose one, compute the path and take the first step.
-					nextNode=this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
-				}
-				
-				//list of observations associated to the currentPosition
-				System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
-
-
-				/************************************************
-				 * 				END API CALL ILUSTRATION
-				 *************************************************/
-				
-				((AbstractDedaleAgent) myAgent).moveTo(nextNode);
-				System.out.println(agent.getLocalName()+" - transition to PING");
-				
+		
+					//3) while openNodes is not empty, continues.
+					if (this.openNodes.isEmpty() || golemBlocked){
+						//Explo finished
+						System.out.println("Exploration successufully done, behaviour removed.");
+					}else{
+						//4) select next move.
+						//4.1 If there exist one open node directly reachable, go for it,
+						//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
+						while (iter2.hasNext()) {
+							Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
+							List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
+							System.out.println("OBSERVATIONS: " + listObsInt);
+							for (int i = 0; i < listObsInt.size(); i++) {
+								if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+									System.out.println("I can smell the golem from here!");
+									String stenchPos = StrList.getLeft();
+									System.out.println("Odor position: " + stenchPos);
+									nextNode = stenchPos;
+									// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
+									// càd on doit verifier que la case où on veut aller est occupée
+								}
+							}
+						}
+					}
+					if (nextNode==null){
+						//no directly accessible openNode
+						//chose one, compute the path and take the first step.
+						nextNode=this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
+					}
+					break;
 			}
+			//list of observations associated to the currentPosition
+			System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
+
+			/************************************************
+			 * 				END API CALL ILUSTRATION
+			 *************************************************/
+			if(nextNode != null) {
+				boolean b = agent.moveTo(nextNode);
+				System.out.println(agent.getLocalName()+" - moveTo "+nextNode+" : "+b);
+			}
+			if(transition == 1)
+				System.out.println(agent.getLocalName()+" - transition to PING");
+			else
+				System.out.println(agent.getLocalName()+" - transition to EXPLO");
 		}
 	}
 	
