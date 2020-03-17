@@ -68,8 +68,8 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/interlockingTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionBisTestTopology";
-//	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
-	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
+	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
 	
 	
 	/**
@@ -88,9 +88,9 @@ public final class ConfigurationFile {
 	/**
 	 * Must'nt be null as it describes the agents capabilities on the map
 	 */
-	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/treasureHunt/anyMap-hunt-1golem1agent-entities";
+//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/treasureHunt/anyMap-hunt-1golem1agent-entities";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo";
-//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo-2";
+	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo-2";
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2018-entities2";
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2019-entitiesExam1";
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/monoAgent-entities";

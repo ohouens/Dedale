@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,26 +29,31 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 
 public class ExploreMultiAgent extends AbstractDedaleAgent{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8829443829282917888L;
+	
+	public static final int MEMORYSIZE = 10;
+	public static final int SHARELOCK = 3;
+	
+	public enum State{
+		rewind, explo, coalition
+	}
+	
 	private MapRepresentation myMap;
 	private ACLMessage lastReceive;
 	private ACLMessage lastSend;
 	private HashSet<String> closedNodes;
 	private List<String> agents;
+	private List<String> positionMemory = new ArrayList<>();
+	private int motionCounterMemory = 0;
+	private int lastShareMemory = 0;
+	private int lockCountdown = 0;
+	private State currentState;
+	private List<State> stateMemory = new ArrayList<>(Arrays.asList(State.explo));
 	
 	public void setup() {
 		super.setup();
 		final Object[] args = getArguments();
 		List<Behaviour> lb=new ArrayList<Behaviour>();
-		
-		//List<String> agents = new ArrayList<String>();
-		//for(int i=1; i<=2; i++) {
-		//	agents.add("Explo"+((Integer)i).toString());
-		//}
 		
 		/********
 		 * Registration on the DF
@@ -161,6 +167,72 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void setTeamates(List<String> tm) {
 		agents = tm;
+	}
+	
+	public List<String> getPositionMemory(){
+		return positionMemory;
+	}
+	
+	public void updatePositionMemory(String position){
+		positionMemory.add(position);
+		if(positionMemory.size() > MEMORYSIZE)
+			positionMemory.remove(0);
+	}
+	
+	public int getMCM() {
+		return motionCounterMemory;
+	}
+	
+	public void updateMCM() {
+		motionCounterMemory ++;
+	}
+	
+	public int getLSM() {
+		return lastShareMemory;
+	}
+	
+	public void updateLSM() {
+		lastShareMemory = motionCounterMemory;
+	}
+	
+	public int getLockCountdown() {
+		return lockCountdown;
+	}
+	
+	public void setLockCoundown(int i) {
+		lockCountdown = i;
+	}
+	
+	public void updateLC() {
+		lockCountdown --;
+	}
+	
+	public State getCurrentState() {
+		return currentState;
+	}
+	
+	public void changeState(State i) {
+		stateMemory.add(currentState);
+		if(stateMemory.size() > MEMORYSIZE)
+			stateMemory.remove(0);
+		currentState = i;
+	}
+	
+	public List<State> getStateMemory(){
+		return stateMemory;
+	}
+	
+	public void printMemory() {
+		printPositionMemory();
+		printStateMemory();
+	}
+	
+	public void printPositionMemory() {
+		System.out.println(getLocalName()+" - positionMemory: "+positionMemory);
+	}
+	
+	public void printStateMemory() {
+		System.out.println(getLocalName()+" - stateMemory:"+stateMemory);
 	}
 	
 	public List<String> getListAgents() {
