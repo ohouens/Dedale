@@ -24,7 +24,20 @@ public class SendMapBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
+		transition = 0;
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
+		agent.updateBehaviourMemory("SENDMAP");
+		boolean stop = true;
+		for(String s : agent.getBehaviourMemory()) {
+			if(!s.equals("SENDMAP"))
+				stop = false;
+		}
+		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
+			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
+			agent.getBehaviourMemory().clear();
+			transition = 2;
+			return;
+		}
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);
 		if(checkDone != null) {

@@ -87,14 +87,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					agent.updateLC();
 					break;
 				case coalition:
-					System.out.println(
-							"Coalition TODO/\r\n" +
-							"Vamos pa' la playa, pa’ curarte el alma\r\n" + 
-							"Cierra la pantalla, abre la Medalla\r\n" + 
-							"Todo el mar Caribe, viendo tu cintura\r\n" + 
-							"Tú le coqueteas, tú eres busca bullas\r\n" + 
-							"Y me gusta"
-					);
+					System.out.println();
 					break;
 				default:
 					transition = 1;
@@ -119,7 +112,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					//3) while openNodes is not empty, continues.
 					if (this.openNodes.isEmpty() || golemBlocked){
 						//Explo finished
-						System.out.println("Exploration successufully done, behaviour removed.");
+						System.out.println(agent.getLocalName()+" - Exploration successufully done, behaviour removed.");
+						return;
 					}else{
 						//4) select next move.
 						//4.1 If there exist one open node directly reachable, go for it,
@@ -158,7 +152,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - moveTo "+nextNode+" : "+b);
 			}
 			if(transition == 1)
-				System.out.println(agent.getLocalName()+" - transition to PING");
+				System.out.println(agent.getLocalName()+" - transition to SWITCH");
 			else
 				System.out.println(agent.getLocalName()+" - transition to EXPLO");
 		}

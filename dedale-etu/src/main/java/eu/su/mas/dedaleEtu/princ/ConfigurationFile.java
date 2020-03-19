@@ -66,8 +66,8 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/mapInterlocking1-topology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/mapInterlocking2-topology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/interlockingTestTopology";
-	public static String INSTANCE_TOPOLOGY="resources/topology/interlockingBisTestTopology";
-//	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/interlockingBisTestTopology";
+	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionBisTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";

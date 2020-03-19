@@ -30,8 +30,8 @@ public class AckPingMapBehaviour extends OneShotBehaviour{
 		Date date= new Date();
 		long time = date.getTime();
 		ack.setContent(String.valueOf(time));
-//		ack.setContent("WANT YOUR MAP");
 		agent.setLastSend(ack);
+		agent.setAckSend(true);
 		((AbstractDedaleAgent)myAgent).sendMessage(ack);
 		System.out.println(myAgent.getLocalName()+" - ACK PING");
 		System.out.println(myAgent.getLocalName()+" - transition to SWITCH");

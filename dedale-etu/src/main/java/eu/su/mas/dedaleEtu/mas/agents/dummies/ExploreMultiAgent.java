@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int lockCountdown = 0;
 	private State currentState = State.explo;
 	private List<State> stateMemory = new ArrayList<>(Arrays.asList(State.explo));
+	private List<String> behaviourMemory = new ArrayList<>();
+	private boolean ackSend = false;
+	private boolean toExplo = false;
 	
 	public void setup() {
 		super.setup();
@@ -83,8 +87,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 			}
 		};
 
-		fsm.registerFirstState(new PingMapBehaviour(this), "PingMap");
-		fsm.registerState(new SwitchBehaviour(this), "Switch");
+		fsm.registerFirstState(new SwitchBehaviour(this), "Switch");
+		fsm.registerState(new PingMapBehaviour(this), "PingMap");
 		fsm.registerState(new SynchronizationBehaviour(this), "Synchronization");
 		fsm.registerState(new AckPingMapBehaviour(this), "AckPingMap");
 		fsm.registerState(new ExploMultiBehaviour(this), "Exploration");
@@ -93,29 +97,36 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerState(new ReceiveMapBehaviour(this, true), "ReceiveOriginalMap");
 		fsm.registerState(new ReceiveMapBehaviour(this, false), "ReceiveFusedMap");
 		
-		fsm.registerTransition("PingMap", "Switch", 0);
+		String[] all = {"Switch", "Synchronization", "SendOriginalMap", "SendFusedMap", "ReceiveOriginalMap", "ReceiveFusedMap"};
 
-		fsm.registerTransition("Switch", "Exploration", 0);
-		fsm.registerTransition("Switch", "AckPingMap", 1);
-		fsm.registerTransition("Switch", "Synchronization", 2);
+		fsm.registerTransition("Switch", "Exploration", 0, all);
+		fsm.registerTransition("Switch", "AckPingMap", 1, all);
+		fsm.registerTransition("Switch", "Synchronization", 2, all);
+		fsm.registerTransition("Switch", "PingMap", 4, all);
 		
-		fsm.registerTransition("AckPingMap", "Switch", 0);
+		fsm.registerTransition("PingMap", "Switch", 0, all);
 		
-		fsm.registerTransition("Synchronization", "ReceiveOriginalMap", 0);
-		fsm.registerTransition("Synchronization", "SendOriginalMap", 1);
+		fsm.registerTransition("AckPingMap", "Switch", 0, all);
 		
-		fsm.registerTransition("ReceiveOriginalMap", "ReceiveOriginalMap", 0);
-		fsm.registerTransition("ReceiveOriginalMap", "SendFusedMap", 1);
-		fsm.registerTransition("SendFusedMap", "SendFusedMap", 0);
-		fsm.registerTransition("SendFusedMap", "Exploration", 1);
-		
-		fsm.registerTransition("SendOriginalMap", "SendOriginalMap", 0);
-		fsm.registerTransition("SendOriginalMap", "ReceiveFusedMap", 1);
-		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0);
-		fsm.registerTransition("ReceiveFusedMap", "Exploration", 1);
+		fsm.registerTransition("Synchronization", "ReceiveOriginalMap", 0, all);
+		fsm.registerTransition("Synchronization", "SendOriginalMap", 1, all);
 
-		fsm.registerTransition("Exploration", "Exploration", 0);
-		fsm.registerTransition("Exploration", "PingMap", 1);
+		fsm.registerTransition("SendOriginalMap", "SendOriginalMap", 0, all);
+		fsm.registerTransition("SendOriginalMap", "ReceiveFusedMap", 1, all);
+		fsm.registerTransition("SendOriginalMap", "PingMap", 2, all);
+		fsm.registerTransition("ReceiveOriginalMap", "ReceiveOriginalMap", 0, all);
+		fsm.registerTransition("ReceiveOriginalMap", "SendFusedMap", 1, all);
+		fsm.registerTransition("ReceiveOriginalMap", "PingMap", 2, all);
+		
+		fsm.registerTransition("SendFusedMap", "SendFusedMap", 0, all);
+		fsm.registerTransition("SendFusedMap", "Exploration", 1, all);
+		fsm.registerTransition("SendFusedMap", "PingMap", 2, all);
+		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0, all);
+		fsm.registerTransition("ReceiveFusedMap", "Exploration", 1, all);
+		fsm.registerTransition("ReceiveFusedMap", "PingMap", 2, all);
+
+		fsm.registerTransition("Exploration", "Exploration", 0, all);
+		fsm.registerTransition("Exploration", "Switch", 1, all);
 		
 		lb.add(fsm);
 		
@@ -125,6 +136,22 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean getAckSend() {
+		return ackSend;
+	}
+	
+	public void setAckSend(boolean as) {
+		ackSend = as;
+	}
+	
+	public boolean toExplo() {
+		if(toExplo)
+			toExplo = false;
+		else
+			toExplo = true;
+		return toExplo;
 	}
 	
 	public MapRepresentation getMap() {
@@ -177,6 +204,16 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 			positionMemory.remove(0);
 	}
 	
+	public List<String> getBehaviourMemory(){
+		return behaviourMemory;
+	}
+	
+	public void updateBehaviourMemory(String behaviour){
+		behaviourMemory.add(behaviour);
+		if(behaviourMemory.size() > MEMORYSIZE)
+			behaviourMemory.remove(0);
+	}
+	
 	public int getMCM() {
 		return motionCounterMemory;
 	}
@@ -223,8 +260,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void printMemory() {
 		printPositionMemory();
 		printStateMemory();
+		printBehaviourMemory();
 	}
 	
+	public void printBehaviourMemory() {
+		System.out.println(getLocalName()+" - behaviourMemory:\t"+behaviourMemory);
+	}
+
 	public void printPositionMemory() {
 		System.out.println(getLocalName()+" - positionMemory:"+positionMemory);
 	}
@@ -258,5 +300,18 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	    }catch(FIPAException fe) {fe.printStackTrace();}
 	    
 	    return agents;
+	}
+	
+	public void ackPing() {
+			ACLMessage ping = getLastReceive();
+			ACLMessage ack = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+			ack.setSender(getAID());
+			ack.addReceiver(ping.getSender());
+			Date date= new Date();
+			long time = date.getTime();
+			ack.setContent(String.valueOf(time));
+//			ack.setContent("WANT YOUR MAP");
+			setLastSend(ack);
+			System.out.println(getLocalName()+" - ACK PING");
 	}
 }

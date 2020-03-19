@@ -26,7 +26,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 		ACLMessage testAckPing = agent.receive(tap);
 		if(testAckPing != null) {
 			transition = 2;
-			agent.setLastReceive(testAckPing);			
+			agent.setLastReceive(testAckPing);
 			System.out.println(agent.getLocalName()+" - transition to SYNCHRONIZATION");
 			return;
 		}
@@ -40,7 +40,12 @@ public class SwitchBehaviour extends OneShotBehaviour{
 			return;
 		}
 		
-		System.out.println(agent.getLocalName()+" - transition to EXPLO");
+		if(agent.toExplo())
+			System.out.println(agent.getLocalName()+" - transition to EXPLO");
+		else {
+			transition = 4;
+			System.out.println(agent.getLocalName()+" - transition to PING");
+		}
 	}
 
 	@Override

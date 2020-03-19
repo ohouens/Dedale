@@ -1,5 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.util.Date;
+
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import jade.core.behaviours.OneShotBehaviour;
@@ -16,10 +18,10 @@ public class SynchronizationBehaviour extends OneShotBehaviour{
 
 	@Override
 	public void action() {
+		transition = 0;
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		ACLMessage MPing = agent.getLastSend();
 		ACLMessage HPing = agent.getLastReceive();
-		transition = 0;
 		if(Long.parseLong(HPing.getContent()) == Long.parseLong(MPing.getContent())) {
 			String s1 = agent.getLocalName();
 			String s2 = HPing.getSender().getLocalName();

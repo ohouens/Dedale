@@ -23,7 +23,20 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 	}
 	
 	public void action() {
+		transition = 0;
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
+		agent.updateBehaviourMemory("RECEIVEMAP");
+		boolean stop = true;
+		for(String s : agent.getBehaviourMemory()) {
+			if(!s.equals("RECEIVEMAP"))
+				stop = false;
+		}
+		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
+			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
+			agent.getBehaviourMemory().clear();
+			transition = 2;
+			return;
+		}
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE);
 		ACLMessage msgMap = myAgent.receive(mt);
 		if(msgMap != null) {
