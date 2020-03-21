@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import dataStructures.tuple.Couple;
@@ -76,9 +77,15 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 						return;
 					}
 					int size = agent.getPositionMemory().size();
-					if(size > 0 && agent.getLastMove()) {
+					List<String> pm = agent.getPositionMemory();
+					if(size >= 2 && !pm.get(size-2).equals(pm.get(size-1)) && agent.getLastMove()) {
 						nextNode = agent.getPositionMemory().remove((int)size-1);
 						System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
+					}else {
+						Random random = new Random();
+						int index = random.nextInt(lobs.size());
+						nextNode = lobs.get(index).getLeft(); 
+						System.out.println(agent.getLocalName()+" - new STOCHASTIC position "+nextNode);
 					}
 					agent.updateLC();
 					break;

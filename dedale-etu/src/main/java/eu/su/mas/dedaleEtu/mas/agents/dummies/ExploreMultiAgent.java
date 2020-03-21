@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -18,6 +21,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SwitchBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SynchronizationBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
@@ -316,6 +320,28 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 //			ack.setContent("WANT YOUR MAP");
 			setLastSend(ack);
 			System.out.println(getLocalName()+" - ACK PING");
+	}
+	
+	public void updateView() {
+		if(myMap == null)
+			myMap = new MapRepresentation();
+		String myPosition = getCurrentPosition();
+		myMap.addNode(myPosition, MapAttribute.open);
+		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=observe();//myPosition
+		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter = lobs.iterator();
+		while(iter.hasNext()){
+			String nodeId=iter.next().getLeft();
+			if (!closedNodes.contains(nodeId) && !myPosition.equals(nodeId)){
+				if (!openNodes.contains(nodeId)){
+					openNodes.add(nodeId);
+					myMap.addNode(nodeId, MapAttribute.open);
+					myMap.addEdge(myPosition, nodeId);	
+				}else{
+					//the node exist, but not necessarily the edge
+					myMap.addEdge(myPosition, nodeId);
+				}
+			}
+		}
 	}
 	
 	public boolean getLastMove() {
