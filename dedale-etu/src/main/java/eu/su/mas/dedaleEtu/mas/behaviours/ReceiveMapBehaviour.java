@@ -45,7 +45,7 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			String inter;
 			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
 			inter = msgMap.getContent();
-			myMap.merge(inter);
+			myMap.merge(inter, agent.getClosedNodes(), agent.getOpenNodes());
 			if(original)
 				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
 			ACLMessage ackMap = new ACLMessage(ACLMessage.CONFIRM);
@@ -62,6 +62,7 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to Exploration");
 			}
 		}
+		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");
 	}
 	
 	@Override

@@ -156,7 +156,7 @@ public class MapRepresentation implements Serializable {
 
 	}
 	
-	public String serialize(HashSet<String> closedNodes) {
+	public String serialize(Set<String> closedNodes) {
 		String result = "";
 		Iterator<Node> iter=this.g.iterator();
 		while(iter.hasNext()){
@@ -180,29 +180,37 @@ public class MapRepresentation implements Serializable {
 		return result;
 	}
 	
-	public void merge(String sm) {
+	public void merge(String sm, Set<String> closedNodes, List<String> openNodes) {
 		String[] tab = sm.split("\\|");
 		String listNodes = tab[0];
 		String listEdges = tab[1];
-//		System.out.println("sssssm "+sm);
-//		System.out.println("nooooOOOdes "+listNodes);
-//		System.out.println("EeeeEEdge "+listEdges);
 		
 		for(String node : listNodes.split(",")) {
 			if(!node.equals("")) {
-//				System.out.println("nooooode - "+node);
-				if(node.split(":")[1].equals("closed"))
-					addNode(node.split(":")[0], MapAttribute.closed);
-				else {
-					if(g.getNode(node.split(":")[0]) == null)
-						addNode(node.split(":")[0], MapAttribute.open);
+				String position = node.split(":")[0];
+				System.out.println("MERGE - pos:"+position+","+node.split(":")[1]+" cn:"+closedNodes+" on:"+openNodes);
+				if(node.split(":")[1].equals("closed")) {
+					if(!closedNodes.contains(position)) {
+						closedNodes.add(position);
+						openNodes.remove(position);
+						addNode(position, MapAttribute.closed);
+						System.out.println("MERGE - HIT CN");
+					}else System.out.println("MERGE - MISS");
+				}else{
+					if(!openNodes.contains(position)) {
+						openNodes.add(position);
+						addNode(position, MapAttribute.open);
+						System.out.println("MERGE - HIT ON");
+					}else System.out.println("MERGE - MISS");
 				}
 			}
 		}
-		
+
+		System.out.println("MERGE - edges: "+listEdges);
 		for(String edge : listEdges.split(",")){
-			if(!edge.equals(""))
+			if(!edge.equals("")) {
 				addEdge(edge.split(":")[0], edge.split(":")[1]);
+			}
 		}
 	}
 

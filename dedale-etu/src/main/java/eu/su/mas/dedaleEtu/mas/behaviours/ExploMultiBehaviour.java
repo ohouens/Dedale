@@ -24,16 +24,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	 */
 	private static final long serialVersionUID = 5631327286239419149L;
 	
-	private MapRepresentation myMap;
-	private List<String> openNodes;
-	private Set<String> closedNodes;
 	private int transition = 1;
 	
 	public ExploMultiBehaviour(final ExploreMultiAgent myAgent) {
 		super(myAgent);
-		this.openNodes=new ArrayList<String>();
-		this.closedNodes=new HashSet<String>();
-		((ExploreMultiAgent)myAgent).setClosedNodes((HashSet<String>) this.closedNodes);
 	}
 
 	@Override
@@ -42,7 +36,9 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		
 		if(agent.getMap() == null)
 			agent.setMap(new MapRepresentation());
-		myMap = agent.getMap();
+		MapRepresentation myMap = agent.getMap();
+		List<String> openNodes = agent.getOpenNodes();
+		Set<String> closedNodes = agent.getClosedNodes();
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
@@ -64,10 +60,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			}
 
 			//1) remove the current node from openlist and add it to closedNodes.
-			this.closedNodes.add(myPosition);
-			this.openNodes.remove(myPosition);
+			closedNodes.add(myPosition);
+			openNodes.remove(myPosition);
 
-			this.myMap.addNode(myPosition,MapAttribute.closed);
+			myMap.addNode(myPosition,MapAttribute.closed);
 
 			//2) get the surrounding nodes and, if not in closedNodes, add them to open nodes.
 			String nextNode=null;
@@ -80,7 +76,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 						return;
 					}
 					int size = agent.getPositionMemory().size();
-					if(size > 0) {
+					if(size > 0 && agent.getLastMove()) {
 						nextNode = agent.getPositionMemory().remove((int)size-1);
 						System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
 					}
@@ -96,21 +92,21 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					Boolean golemBlocked = false;
 					while(iter.hasNext()){
 						String nodeId=iter.next().getLeft();
-						if (!this.closedNodes.contains(nodeId)){
-							if (!this.openNodes.contains(nodeId)){
-								this.openNodes.add(nodeId);
-								this.myMap.addNode(nodeId, MapAttribute.open);
-								this.myMap.addEdge(myPosition, nodeId);	
+						if (!closedNodes.contains(nodeId)){
+							if (!openNodes.contains(nodeId)){
+								openNodes.add(nodeId);
+								myMap.addNode(nodeId, MapAttribute.open);
+								myMap.addEdge(myPosition, nodeId);	
 							}else{
 								//the node exist, but not necessarily the edge
-								this.myMap.addEdge(myPosition, nodeId);
+								myMap.addEdge(myPosition, nodeId);
 							}
 							if (nextNode==null) nextNode=nodeId;
 						}
 					}
 		
 					//3) while openNodes is not empty, continues.
-					if (this.openNodes.isEmpty() || golemBlocked){
+					if (openNodes.isEmpty() || golemBlocked){
 						//Explo finished
 						System.out.println(agent.getLocalName()+" - Exploration successufully done, behaviour removed.");
 						return;
@@ -134,10 +130,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 							}
 						}
 					}
-					if (nextNode==null){
+					if (nextNode==null && !openNodes.isEmpty()){
 						//no directly accessible openNode
 						//chose one, compute the path and take the first step.
-						nextNode=this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
+						nextNode=myMap.getShortestPath(myPosition, openNodes.get(0)).get(0);
 					}
 					break;
 			}
@@ -148,8 +144,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
 			if(nextNode != null) {
-				boolean b = agent.moveTo(nextNode);
-				System.out.println(agent.getLocalName()+" - moveTo "+nextNode+" : "+b);
+				agent.setLastMove(agent.moveTo(nextNode));
+				System.out.println(agent.getLocalName()+" - moveTo "+nextNode+" : "+agent.getLastMove());
 			}
 			if(transition == 1)
 				System.out.println(agent.getLocalName()+" - transition to SWITCH");

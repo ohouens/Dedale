@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
@@ -39,7 +40,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private MapRepresentation myMap;
 	private ACLMessage lastReceive;
 	private ACLMessage lastSend;
-	private HashSet<String> closedNodes;
+	private List<String> openNodes = new ArrayList<>();;
+	private Set<String> closedNodes = new HashSet<String>();
 	private List<String> agents;
 	private List<String> positionMemory = new ArrayList<>();
 	private int motionCounterMemory = 0;
@@ -50,6 +52,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private List<String> behaviourMemory = new ArrayList<>();
 	private boolean ackSend = false;
 	private boolean toExplo = false;
+	private boolean lastMove = false;
 	
 	public void setup() {
 		super.setup();
@@ -113,17 +116,17 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 
 		fsm.registerTransition("SendOriginalMap", "SendOriginalMap", 0, all);
 		fsm.registerTransition("SendOriginalMap", "ReceiveFusedMap", 1, all);
-		fsm.registerTransition("SendOriginalMap", "PingMap", 2, all);
+		fsm.registerTransition("SendOriginalMap", "AckPingMap", 2, all);
 		fsm.registerTransition("ReceiveOriginalMap", "ReceiveOriginalMap", 0, all);
 		fsm.registerTransition("ReceiveOriginalMap", "SendFusedMap", 1, all);
-		fsm.registerTransition("ReceiveOriginalMap", "PingMap", 2, all);
+		fsm.registerTransition("ReceiveOriginalMap", "AckPingMap", 2, all);
 		
 		fsm.registerTransition("SendFusedMap", "SendFusedMap", 0, all);
 		fsm.registerTransition("SendFusedMap", "Exploration", 1, all);
-		fsm.registerTransition("SendFusedMap", "PingMap", 2, all);
+		fsm.registerTransition("SendFusedMap", "AckPingMap", 2, all);
 		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0, all);
 		fsm.registerTransition("ReceiveFusedMap", "Exploration", 1, all);
-		fsm.registerTransition("ReceiveFusedMap", "PingMap", 2, all);
+		fsm.registerTransition("ReceiveFusedMap", "AckPingMap", 2, all);
 
 		fsm.registerTransition("Exploration", "Exploration", 0, all);
 		fsm.registerTransition("Exploration", "Switch", 1, all);
@@ -178,12 +181,12 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		lastSend = last;
 	}
 	
-	public HashSet<String> getClosedNodes(){
-		return closedNodes;
+	public List<String> getOpenNodes(){
+		return openNodes;
 	}
 	
-	public void setClosedNodes(HashSet<String> cn) {
-		closedNodes = cn;
+	public Set<String> getClosedNodes(){
+		return closedNodes;
 	}
 	
 	public List<String> getTeamates(){
@@ -313,5 +316,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 //			ack.setContent("WANT YOUR MAP");
 			setLastSend(ack);
 			System.out.println(getLocalName()+" - ACK PING");
+	}
+	
+	public boolean getLastMove() {
+		// TODO Auto-generated method stub
+		return lastMove;
+	}
+	
+	public void setLastMove(boolean lm) {
+		lastMove = lm;
 	}
 }
