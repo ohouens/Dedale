@@ -51,15 +51,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//List of observable from the agent's current position
 			List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 
-			/**
-			 * Just added here to let you see what the agent is doing, otherwise he will be too quick
-			 */
-			try {
-				this.myAgent.doWait(500);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
 			//1) remove the current node from openlist and add it to closedNodes.
 			closedNodes.add(myPosition);
 			openNodes.remove(myPosition);
@@ -152,6 +143,17 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			/************************************************
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
+
+			/**
+			 * Just added here to let you see what the agent is doing, otherwise he will be too quick
+			 */
+			try {
+				this.myAgent.doWait(3000);
+				//System.in.read();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			if(nextNode != null) {
 				agent.setLastMove(agent.moveTo(nextNode));
 				System.out.println(agent.getLocalName()+" - moveTo "+nextNode+" : "+agent.getLastMove());
