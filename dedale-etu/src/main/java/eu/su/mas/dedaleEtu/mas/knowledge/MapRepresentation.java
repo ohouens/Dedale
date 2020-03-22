@@ -197,7 +197,7 @@ public class MapRepresentation implements Serializable {
 						System.out.println("MERGE - HIT CN");
 					}else System.out.println("MERGE - MISS");
 				}else{
-					if(!openNodes.contains(position)) {
+					if(!closedNodes.contains(position) && !openNodes.contains(position)) {
 						openNodes.add(position);
 						addNode(position, MapAttribute.open);
 						System.out.println("MERGE - HIT ON");

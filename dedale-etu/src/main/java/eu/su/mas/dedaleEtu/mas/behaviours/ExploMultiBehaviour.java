@@ -74,14 +74,16 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					transition = 0;
 					if(agent.getLockCountdown() <= 0) {
 						agent.changeState(ExploreMultiAgent.State.explo);
+						agent.setSequence(true);
 						return;
 					}
 					int size = agent.getPositionMemory().size();
 					List<String> pm = agent.getPositionMemory();
-					if(size >= 2 && !pm.get(size-2).equals(pm.get(size-1)) && agent.getLastMove()) {
+					if(size >= 2 && !pm.get(size-2).equals(pm.get(size-1)) && agent.getLastMove() && agent.getSequence()) {
 						nextNode = agent.getPositionMemory().remove((int)size-1);
 						System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
 					}else {
+						agent.setSequence(false);
 						Random random = new Random();
 						int index = random.nextInt(lobs.size());
 						nextNode = lobs.get(index).getLeft(); 

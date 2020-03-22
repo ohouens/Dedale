@@ -57,6 +57,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private boolean ackSend = false;
 	private boolean toExplo = false;
 	private boolean lastMove = false;
+	private boolean sequence = true;
 	
 	public void setup() {
 		super.setup();
@@ -143,6 +144,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(boolean b) {
+		sequence = b;
 	}
 	
 	public boolean getAckSend() {
@@ -326,7 +335,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		if(myMap == null)
 			myMap = new MapRepresentation();
 		String myPosition = getCurrentPosition();
-		myMap.addNode(myPosition, MapAttribute.open);
+		if(!closedNodes.contains(myPosition) && !openNodes.contains(myPosition))
+			myMap.addNode(myPosition, MapAttribute.open);
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=observe();//myPosition
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter = lobs.iterator();
 		while(iter.hasNext()){
