@@ -75,6 +75,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 						System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
 					}else {
 						agent.setSequence(false);
+						agent.getPositionMemory().clear();
 						Random random = new Random();
 						int index = random.nextInt(lobs.size());
 						nextNode = lobs.get(index).getLeft(); 
@@ -133,7 +134,9 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					if (nextNode==null && !openNodes.isEmpty()){
 						//no directly accessible openNode
 						//chose one, compute the path and take the first step.
-						nextNode=myMap.getShortestPath(myPosition, openNodes.get(0)).get(0);
+						List<String> sp = myMap.getShortestPath(myPosition, openNodes.get(0));
+						if(sp.size() > 0)
+							nextNode=sp.get(0);
 					}
 					break;
 			}
@@ -147,12 +150,12 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			/**
 			 * Just added here to let you see what the agent is doing, otherwise he will be too quick
 			 */
-			try {
-				this.myAgent.doWait(3000);
-				//System.in.read();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			try {
+//				this.myAgent.doWait(500);
+//				System.in.read();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 			
 			if(nextNode != null) {
 				agent.setLastMove(agent.moveTo(nextNode));

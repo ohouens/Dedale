@@ -128,7 +128,8 @@ public class MapRepresentation implements Serializable {
 			shortestPath.add(iter.next().getId());
 		}
 		dijkstra.clear();
-		shortestPath.remove(0);//remove the current position
+		if(shortestPath.size() > 0)
+			shortestPath.remove(0);//remove the current position
 		return shortestPath;
 	}
 
