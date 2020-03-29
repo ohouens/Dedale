@@ -26,8 +26,13 @@ public class PlanBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				transition = 0;
-				System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
+				if(!agent.getExploDone()) {
+					transition = 0;
+					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
+				}else {
+					transition = 3;
+//					System.out.println(agent.getLocalName()+" - transition to COALITION");
+				}
 				break;
 		}
 	}

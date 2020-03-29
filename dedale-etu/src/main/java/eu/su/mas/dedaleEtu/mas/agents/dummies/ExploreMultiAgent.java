@@ -14,6 +14,7 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import eu.su.mas.dedaleEtu.mas.behaviours.AckPingMapBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.CoalitionBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.HuntBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.PingMapBehaviour;
@@ -57,10 +58,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private State currentState = State.explo;
 	private List<State> stateMemory = new ArrayList<>(Arrays.asList(State.explo));
 	private List<String> behaviourMemory = new ArrayList<>();
-	private boolean ackSend = false;
 	private boolean toExplo = false;
 	private boolean lastMove = false;
-	private boolean sequence = true;
+	private boolean exploDone = false;
 	
 	public void setup() {
 		super.setup();
@@ -109,9 +109,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerState(new PlanBehaviour(this), "Planification");
 		fsm.registerState(new HuntBehaviour(this), "Hunting");
 		fsm.registerState(new TargetBehaviour(this), "Target");
+		fsm.registerState(new CoalitionBehaviour(this), "Coalition");
 		fsm.registerState(new ExploMultiBehaviour(this), "Exploration");
 		
-		String[] all = {"Switch", "Synchronization", "SendOriginalMap", "SendFusedMap", "ReceiveOriginalMap", "ReceiveFusedMap", "Planification", "Hunting", "Target", "Exploration"};
+		String[] all = {"Switch", "Synchronization", "SendOriginalMap", "SendFusedMap", "ReceiveOriginalMap", "ReceiveFusedMap", "Planification", "Hunting", "Target", "Exploration", "Coalition"};
 
 		fsm.registerTransition("Switch", "Planification", 0, all);
 		fsm.registerTransition("Switch", "AckPingMap", 1, all);
@@ -142,6 +143,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerTransition("Planification", "Exploration", 0, all);
 		fsm.registerTransition("Planification", "Target", 1, all);
 		fsm.registerTransition("Planification", "Hunting", 2, all);
+		fsm.registerTransition("Planification", "Coalition", 3, all);
 
 		fsm.registerTransition("Exploration", "Exploration", 0, all);
 		fsm.registerTransition("Exploration", "Switch", 1, all);
@@ -149,6 +151,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerTransition("Target", "Switch", 1, all);
 		fsm.registerTransition("Hunting", "Hunting", 0, all);
 		fsm.registerTransition("Hunting", "Switch", 1, all);
+		fsm.registerTransition("Coalition", "Coalition", 0, all);
+		fsm.registerTransition("Coalition", "Switch", 1, all);
 		
 		lb.add(fsm);
 		
@@ -158,6 +162,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean getExploDone() {
+		return exploDone;
+	}
+	
+	public void setExploDone(boolean done) {
+		exploDone = done;
 	}
 	
 	public boolean toExplo() {

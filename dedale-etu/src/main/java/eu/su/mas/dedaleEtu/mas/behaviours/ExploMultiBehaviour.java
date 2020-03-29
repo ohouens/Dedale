@@ -76,32 +76,34 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					if (nextNode==null) nextNode=nodeId;
 				}
 			}
-
+			
 			//3) while openNodes is not empty, continues.
 			if (openNodes.isEmpty()){
 				//Explo finished
+				agent.setExploDone(true);
 				System.out.println(agent.getLocalName()+" - Exploration successufully done, behaviour removed.");
 				return;
-			}else{
-				//4) select next move.
-				//4.1 If there exist one open node directly reachable, go for it,
-				//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
-				while (iter2.hasNext()) {
-					Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
-					List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
-					System.out.println("OBSERVATIONS: " + listObsInt);
-					for (int i = 0; i < listObsInt.size(); i++) {
-						if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-							System.out.println("I can smell the golem from here!");
-							String stenchPos = StrList.getLeft();
-							System.out.println("Odor position: " + stenchPos);
-							nextNode = stenchPos;
-							// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
-							// càd on doit verifier que la case où on veut aller est occupée
-						}
+			}
+			
+			//4) select next move.
+			//4.1 If there exist one open node directly reachable, go for it,
+			//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
+			while (iter2.hasNext()) {
+				Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
+				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
+				System.out.println("OBSERVATIONS: " + listObsInt);
+				for (int i = 0; i < listObsInt.size(); i++) {
+					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+						System.out.println("I can smell the golem from here!");
+						String stenchPos = StrList.getLeft();
+						System.out.println("Odor position: " + stenchPos);
+						nextNode = stenchPos;
+						// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
+						// càd on doit verifier que la case où on veut aller est occupée
 					}
 				}
 			}
+			
 			if (nextNode==null && !openNodes.isEmpty()){
 				//no directly accessible openNode
 				//chose one, compute the path and take the first step.
