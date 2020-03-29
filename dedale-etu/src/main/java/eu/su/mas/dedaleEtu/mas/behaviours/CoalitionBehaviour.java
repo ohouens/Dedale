@@ -6,7 +6,7 @@ import jade.core.behaviours.OneShotBehaviour;
 public class CoalitionBehaviour extends OneShotBehaviour{
 	private static final long serialVersionUID = 1L;
 	
-	private int transition=0;
+	private int transition=1;
 	
 	public CoalitionBehaviour(ExploreMultiAgent myAgent) {
 		super(myAgent);
