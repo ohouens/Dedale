@@ -21,12 +21,8 @@ public class PlanBehaviour extends OneShotBehaviour{
 				transition = 1;
 				System.out.println(agent.getLocalName()+" - transition to TARGET");
 				break;
-			case coalition:
-				transition = 2;
-				System.out.println(agent.getLocalName()+" - transition to COALITION");
-				break;
 			case hunt:
-				transition = 3;
+				transition = 2;
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
