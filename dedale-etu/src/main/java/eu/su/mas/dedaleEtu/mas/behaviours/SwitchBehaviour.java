@@ -42,7 +42,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 		}
 		
 		if(agent.toExplo())
-			System.out.println(agent.getLocalName()+" - transition to EXPLO");
+			System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 		else {
 			transition = 4;
 			System.out.println(agent.getLocalName()+" - transition to PING");

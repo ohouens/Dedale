@@ -15,11 +15,14 @@ import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import eu.su.mas.dedaleEtu.mas.behaviours.AckPingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.HuntBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.PingMapBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.PlanBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ReceiveMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SwitchBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SynchronizationBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.TargetBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.Behaviour;
@@ -38,7 +41,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public static final int SHARELOCK = 3;
 	
 	public enum State{
-		rewind, explo, coalition
+		rewind, explo, coalition, hunt
 	}
 	
 	private MapRepresentation myMap;
@@ -97,17 +100,20 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 
 		fsm.registerFirstState(new SwitchBehaviour(this), "Switch");
 		fsm.registerState(new PingMapBehaviour(this), "PingMap");
-		fsm.registerState(new SynchronizationBehaviour(this), "Synchronization");
 		fsm.registerState(new AckPingMapBehaviour(this), "AckPingMap");
-		fsm.registerState(new ExploMultiBehaviour(this), "Exploration");
+		fsm.registerState(new SynchronizationBehaviour(this), "Synchronization");
 		fsm.registerState(new SendMapBehaviour(this, true), "SendOriginalMap");
 		fsm.registerState(new SendMapBehaviour(this, false), "SendFusedMap");
 		fsm.registerState(new ReceiveMapBehaviour(this, true), "ReceiveOriginalMap");
 		fsm.registerState(new ReceiveMapBehaviour(this, false), "ReceiveFusedMap");
+		fsm.registerState(new PlanBehaviour(this), "Planification");
+		fsm.registerState(new HuntBehaviour(this), "Hunting");
+		fsm.registerState(new TargetBehaviour(this), "Target");
+		fsm.registerState(new ExploMultiBehaviour(this), "Exploration");
 		
-		String[] all = {"Switch", "Synchronization", "SendOriginalMap", "SendFusedMap", "ReceiveOriginalMap", "ReceiveFusedMap"};
+		String[] all = {"Switch", "Synchronization", "SendOriginalMap", "SendFusedMap", "ReceiveOriginalMap", "ReceiveFusedMap", "Planification", "Hunting", "Target", "Exploration"};
 
-		fsm.registerTransition("Switch", "Exploration", 0, all);
+		fsm.registerTransition("Switch", "Planification", 0, all);
 		fsm.registerTransition("Switch", "AckPingMap", 1, all);
 		fsm.registerTransition("Switch", "Synchronization", 2, all);
 		fsm.registerTransition("Switch", "PingMap", 4, all);
@@ -127,14 +133,22 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		fsm.registerTransition("ReceiveOriginalMap", "AckPingMap", 2, all);
 		
 		fsm.registerTransition("SendFusedMap", "SendFusedMap", 0, all);
-		fsm.registerTransition("SendFusedMap", "Exploration", 1, all);
+		fsm.registerTransition("SendFusedMap", "Planification", 1, all);
 		fsm.registerTransition("SendFusedMap", "AckPingMap", 2, all);
 		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0, all);
-		fsm.registerTransition("ReceiveFusedMap", "Exploration", 1, all);
+		fsm.registerTransition("ReceiveFusedMap", "Planification", 1, all);
 		fsm.registerTransition("ReceiveFusedMap", "AckPingMap", 2, all);
+		
+		fsm.registerTransition("Planification", "Exploration", 0, all);
+		fsm.registerTransition("Planification", "Target", 1, all);
+		fsm.registerTransition("Planification", "Hunting", 2, all);
 
 		fsm.registerTransition("Exploration", "Exploration", 0, all);
 		fsm.registerTransition("Exploration", "Switch", 1, all);
+		fsm.registerTransition("Target", "Target", 0, all);
+		fsm.registerTransition("Target", "Switch", 1, all);
+		fsm.registerTransition("Hunting", "Hunting", 0, all);
+		fsm.registerTransition("Hunting", "Switch", 1, all);
 		
 		lb.add(fsm);
 		
@@ -144,22 +158,6 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
-	}
-	
-	public boolean getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(boolean b) {
-		sequence = b;
-	}
-	
-	public boolean getAckSend() {
-		return ackSend;
-	}
-	
-	public void setAckSend(boolean as) {
-		ackSend = as;
 	}
 	
 	public boolean toExplo() {
@@ -354,12 +352,25 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		}
 	}
 	
+	public void move(String nextNode) {
+		try {
+			doWait(3000);
+//			System.in.read();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if(nextNode != null) {
+			setLastMove(moveTo(nextNode));
+			System.out.println(getLocalName()+" - moveTo "+nextNode+" : "+getLastMove());
+		}
+	}
+	
 	public boolean getLastMove() {
-		// TODO Auto-generated method stub
 		return lastMove;
 	}
 	
-	public void setLastMove(boolean lm) {
+	private void setLastMove(boolean lm) {
 		lastMove = lm;
 	}
 }

@@ -59,7 +59,7 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			else {
 				agent.changeState(State.rewind);
 				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
-				System.out.println(agent.getLocalName()+" - transition to Exploration");
+				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 		}
 		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");

@@ -47,7 +47,7 @@ public class SendMapBehaviour extends OneShotBehaviour{
 			else {
 				agent.changeState(State.rewind);
 				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
-				System.out.println(agent.getLocalName()+" - transition to Exploration");
+				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 			return;
 		}
