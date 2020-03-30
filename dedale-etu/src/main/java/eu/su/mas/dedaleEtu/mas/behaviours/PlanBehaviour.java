@@ -1,7 +1,9 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,15 +14,15 @@ import jade.core.behaviours.OneShotBehaviour;
 public class PlanBehaviour extends OneShotBehaviour{
 
 	private int transition;
+	private ExploreMultiAgent agent;
 	
 	public PlanBehaviour(AbstractDedaleAgent myAgent) {
 		super(myAgent);
+		agent = (ExploreMultiAgent)myAgent;
 	}
 	
 	@Override
 	public void action() {
-		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		
 		switch(agent.getCurrentState()) {
 			case rewind:
 				transition = 1;
@@ -50,16 +52,53 @@ public class PlanBehaviour extends OneShotBehaviour{
 	}
 	
 	public List<String> makeRoute() {
-		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		List<String> result = new ArrayList<>();
 		Set<String> queue = agent.getMap().getAllNodes();
-		result.add(agent.getCurrentPosition());
+		String cursor = agent.getCurrentPosition();
+		result.add(cursor);
+		queue.remove(cursor);
+		agent.setMaxSpace(1);
+		while(!queue.isEmpty()) {
+			Iterator<String> neighbor = agent.getMap().getNeighbor(cursor);
+			String inter = null;
+			while(neighbor.hasNext() && inter == null) {
+				inter = neighbor.next();
+				if(!queue.contains(inter))
+					inter = null;
+			}
+			if(inter != null) {
+				cursor = inter;
+				result.add(cursor);
+				queue.remove(cursor);
+			}else {
+				System.out.println("REWIIIIIIIIND QUUEUUE");
+				Collection<String> rewind = rewind(queue,result);
+				agent.setMaxSpace(rewind.size()+1);
+				result.addAll(rewind);
+			}
+		}
 		return result;
 	}
 	
-	public List<String> rewind(){
-		List<String> buffer = null;
-		
+	public Collection<String> rewind(Set<String> queue, List<String> result){
+		List<String> buffer = new ArrayList<>();
+		List<String> copy = new ArrayList<>(result);
+		String cursor = null;
+		int i = copy.size()-1;
+		while(cursor == null && copy.contains(cursor)) {
+			cursor = copy.get(i);
+			buffer.add(cursor);
+			Iterator<String> neighbor = agent.getMap().getNeighbor(cursor);
+			String inter = null;
+			while(neighbor.hasNext() && inter == null) {
+				inter = neighbor.next();
+				if(!queue.contains(inter))
+					inter = null;
+			}
+			if(inter != null)
+				cursor = inter;
+			i--;
+		}
 		return buffer;
 	}
 }
