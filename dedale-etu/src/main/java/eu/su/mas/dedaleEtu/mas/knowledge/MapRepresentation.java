@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.knowledge;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +59,9 @@ public class MapRepresentation implements Serializable {
 	private Integer nbEdges;//used to generate the edges ids
 
 	private SerializableSimpleGraph<String, MapAttribute> sg;//used as a temporary dataStructure during migration
+	
+	private Set<String> nodes = new HashSet<>();
+	private HashMap<String, Set<String>> graph = new HashMap<>();
 
 
 	public MapRepresentation() {
@@ -90,6 +94,7 @@ public class MapRepresentation implements Serializable {
 		n.clearAttributes();
 		n.setAttribute("ui.class", mapAttribute.toString());
 		n.setAttribute("ui.label",id);
+		nodes.add(id);
 	}
 
 	/**
@@ -101,6 +106,12 @@ public class MapRepresentation implements Serializable {
 		try {
 			this.nbEdges++;
 			this.g.addEdge(this.nbEdges.toString(), idNode1, idNode2);
+			if(graph.get(idNode1) == null)
+				graph.put(idNode1, new HashSet<>());
+			if(graph.get(idNode2) == null)
+				graph.put(idNode2, new HashSet<>());
+			graph.get(idNode1).add(idNode2);
+			graph.get(idNode2).add(idNode1);
 		}catch (EdgeRejectedException e){
 			//Do not add an already existing one
 			this.nbEdges--;
@@ -213,6 +224,14 @@ public class MapRepresentation implements Serializable {
 				addEdge(edge.split(":")[0], edge.split(":")[1]);
 			}
 		}
+	}
+	
+	public Set<String> getAllNodes() {
+		return new HashSet<>(nodes);
+	}
+	
+	public Iterator<String> getNeighbor(String node){
+		return graph.get(node).iterator();
 	}
 
 	

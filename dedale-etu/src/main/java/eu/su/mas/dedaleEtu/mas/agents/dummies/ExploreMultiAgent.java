@@ -26,6 +26,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.SynchronizationBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.TargetBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
@@ -61,6 +62,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private boolean toExplo = false;
 	private boolean lastMove = false;
 	private boolean exploDone = false;
+	private List<String> route;
+	private int routeCursor = 0;
+	private int maxSpace = 0;
 	
 	public void setup() {
 		super.setup();
@@ -301,6 +305,38 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		System.out.println(getLocalName()+" - stateMemory:\t"+stateMemory);
 	}
 	
+	public List<String> getRoute(){
+		return route;
+	}
+	
+	public void setRoute(List<String> r) {
+		route = r;
+	}
+	
+	public int getRouteCursor() {
+		return routeCursor;
+	}
+	
+	public void setRouteCursor(int i) {
+		routeCursor = i;
+	}
+	
+	public String getRouteWay() {
+		String result = route.get(routeCursor);
+		routeCursor++;
+		if(routeCursor >= route.size())
+			routeCursor = 0;
+		return result;
+	}
+	
+	public int getMaxSpace() {
+		return maxSpace;
+	}
+	
+	public void setMaxSpace(int ms) {
+		maxSpace = ms;
+	}
+	
 	public List<String> getListAgents() {
 		List<String> agents = new ArrayList<>();
 		
@@ -328,17 +364,15 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	    return agents;
 	}
 	
-	public void ackPing() {
-			ACLMessage ping = getLastReceive();
-			ACLMessage ack = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-			ack.setSender(getAID());
-			ack.addReceiver(ping.getSender());
-			Date date= new Date();
-			long time = date.getTime();
-			ack.setContent(String.valueOf(time));
-//			ack.setContent("WANT YOUR MAP");
-			setLastSend(ack);
-			System.out.println(getLocalName()+" - ACK PING");
+	public void ping(int type, String content) {
+		ACLMessage ack = new ACLMessage(type);
+		ack.setSender(getAID());
+		for(String s : agents)
+			ack.addReceiver(new AID(s, AID.ISLOCALNAME));
+		ack.setContent(content);
+		sendMessage(ack);
+		setLastSend(ack);
+		System.out.println(getLocalName()+" - PING");
 	}
 	
 	public void updateView() {
