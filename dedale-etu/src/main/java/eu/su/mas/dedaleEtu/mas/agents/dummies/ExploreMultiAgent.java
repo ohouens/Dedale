@@ -345,8 +345,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		if(myMap == null)
 			myMap = new MapRepresentation();
 		String myPosition = getCurrentPosition();
-		if(!closedNodes.contains(myPosition) && !openNodes.contains(myPosition))
-			myMap.addNode(myPosition, MapAttribute.open);
+		if(!closedNodes.contains(myPosition))
+			myMap.addNode(myPosition, MapAttribute.closed);
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=observe();//myPosition
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter = lobs.iterator();
 		while(iter.hasNext()){
@@ -366,7 +366,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void move(String nextNode) {
 		try {
-			doWait(3000);
+			doWait(500);
 //			System.in.read();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -61,9 +61,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			String nextNode=null;
 			transition = 1;
 			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=lobs.iterator();
-			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
 			while(iter.hasNext()){
-				String nodeId=iter.next().getLeft();
+				Couple<String, List<Couple<Observation, Integer>>> couple = iter.next();
+				String nodeId=couple.getLeft();
+				List <Couple<Observation, Integer>> listObsInt = couple.getRight();
 				if (!closedNodes.contains(nodeId)){
 					if (!openNodes.contains(nodeId)){
 						openNodes.add(nodeId);
@@ -74,6 +75,18 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 						myMap.addEdge(myPosition, nodeId);
 					}
 					if (nextNode==null) nextNode=nodeId;
+				}
+				
+				System.out.println("OBSERVATIONS: " + listObsInt);
+				for (int i = 0; i < listObsInt.size(); i++) {
+					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+						System.out.println(agent.getLocalName()+" - I can smell the golem from here!");
+						String stenchPos = couple.getLeft();
+						System.out.println(agent.getLocalName()+" - Odor position: " + stenchPos);
+						nextNode = stenchPos;
+						agent.changeState(ExploreMultiAgent.State.hunt);
+						System.out.println(agent.getLocalName()+" - HUNTING Mode activated");
+					}
 				}
 			}
 			
@@ -88,22 +101,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//4) select next move.
 			//4.1 If there exist one open node directly reachable, go for it,
 			//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
-			while (iter2.hasNext()) {
-				Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
-				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
-				System.out.println("OBSERVATIONS: " + listObsInt);
-				for (int i = 0; i < listObsInt.size(); i++) {
-					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-						System.out.println("I can smell the golem from here!");
-						String stenchPos = StrList.getLeft();
-						System.out.println("Odor position: " + stenchPos);
-						nextNode = stenchPos;
-						// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
-						// càd on doit verifier que la case où on veut aller est occupée
-					}
-				}
-			}
-			
 			if (nextNode==null && !openNodes.isEmpty()){
 				//no directly accessible openNode
 				//chose one, compute the path and take the first step.
