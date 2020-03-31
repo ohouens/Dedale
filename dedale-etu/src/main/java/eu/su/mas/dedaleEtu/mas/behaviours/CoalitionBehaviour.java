@@ -21,7 +21,9 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		System.out.println(agent.getLocalName()+" - route: "+agent.getRoute()+", cursor: "+agent.getRouteCursor());
+		System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
+		System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
+		System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
 		
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=agent.observe().iterator();
 		while(iter.hasNext()){

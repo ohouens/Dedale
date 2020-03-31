@@ -2,9 +2,11 @@ package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -57,6 +59,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 		String cursor = agent.getCurrentPosition();
 		result.add(cursor);
 		queue.remove(cursor);
+		String origin = cursor;
 		agent.setMaxSpace(1);
 		while(!queue.isEmpty()) {
 			Iterator<String> neighbor = agent.getMap().getNeighbor(cursor);
@@ -71,11 +74,20 @@ public class PlanBehaviour extends OneShotBehaviour{
 				result.add(cursor);
 				queue.remove(cursor);
 			}else {
-				System.out.println("REWIIIIIIIIND QUUEUUE");
-				Collection<String> rewind = rewind(queue,result);
-				agent.setMaxSpace(rewind.size()+1);
+				Collection<String> rewind = nearestLeaf(queue,result);
+				queue.removeAll(rewind);
+				System.out.println("rewind: "+rewind);
+				if(rewind.size()+1 > agent.getMaxSpace())
+					agent.setMaxSpace(rewind.size()+1);
 				result.addAll(rewind);
+				cursor = result.get(result.size()-1);
 			}
+		}
+		String end = result.get(result.size()-1);
+		if(!origin.equals(end)) {
+			List<String> add = agent.getMap().getShortestPath(end, origin);
+			add.remove(add.size()-1);
+			result.addAll(add);
 		}
 		return result;
 	}
@@ -84,20 +96,38 @@ public class PlanBehaviour extends OneShotBehaviour{
 		List<String> buffer = new ArrayList<>();
 		List<String> copy = new ArrayList<>(result);
 		String cursor = null;
-		int i = copy.size()-1;
-		while(cursor == null && copy.contains(cursor)) {
+		String inter = null;
+		int i = copy.size()-2;
+		while(inter == null) {
 			cursor = copy.get(i);
 			buffer.add(cursor);
 			Iterator<String> neighbor = agent.getMap().getNeighbor(cursor);
-			String inter = null;
 			while(neighbor.hasNext() && inter == null) {
 				inter = neighbor.next();
 				if(!queue.contains(inter))
 					inter = null;
 			}
-			if(inter != null)
-				cursor = inter;
 			i--;
+		}
+		return buffer;
+	}
+	
+	public Collection<String> nearestLeaf(Set<String> queue, List<String> result){
+		List<String> buffer = new ArrayList<>();
+		HashMap<List<String>, Integer> shortest = new HashMap<>();
+		String cursor = result.get(result.size()-1);
+		for(String node : queue) {
+			List<String> l = agent.getMap().getShortestPath(cursor, node);
+			shortest.put(l, l.size());
+		}
+		int min = -1;
+		Iterator<Entry<List<String>, Integer>> iter = shortest.entrySet().iterator();
+		while(iter.hasNext() && min != 2) {
+			Entry<List<String>, Integer> current = iter.next();
+			if((current.getValue() < min || min == -1) && current.getValue() > 0) {
+				buffer = current.getKey();
+				min = current.getValue();
+			}
 		}
 		return buffer;
 	}
