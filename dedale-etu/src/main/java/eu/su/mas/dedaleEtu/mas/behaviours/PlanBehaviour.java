@@ -41,8 +41,6 @@ public class PlanBehaviour extends OneShotBehaviour{
 				}else {
 					if(agent.getRoute() == null)
 						agent.setRoute(makeRoute());
-					else
-						agent.setRouteCursor(agent.getRoute().indexOf(agent.getCurrentPosition()));
 					transition = 3;
 					System.out.println(agent.getLocalName()+" - transition to COALITION");
 				}

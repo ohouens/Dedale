@@ -44,6 +44,8 @@ public class HuntBehaviour extends OneShotBehaviour{
 		if(nextNode == null) {
 			transition = 1;
 			agent.changeState(ExploreMultiAgent.State.explo);
+			if(agent.getRoute() != null)
+				agent.setRouteCursor(agent.getRoute().indexOf(agent.getCurrentPosition()));
 			System.out.println(agent.getLocalName()+" - HUNTING Mode desactivated");
 			System.out.println(agent.getLocalName()+" - transition to SWITCH");
 			return;

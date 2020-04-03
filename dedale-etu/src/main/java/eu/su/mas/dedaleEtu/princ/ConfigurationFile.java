@@ -57,7 +57,7 @@ public final class ConfigurationFile {
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */ 
-	public static String INSTANCE_TOPOLOGY=null;
+//	public static String INSTANCE_TOPOLOGY=null;
 //	public static String INSTANCE_TOPOLOGY = "resources/topology/BinaryTree1";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/map2018-topology-ica";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/HouatTopology";
@@ -69,15 +69,15 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/interlockingBisTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionBisTestTopology";
-//	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
+	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
 	
 	
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */
-	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
-//	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap";
+//	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
+	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/treasureHunt/map2018-elements-ica";
 //	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/interlocking/mapInterlocking2-elements";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/Houat-elements";
