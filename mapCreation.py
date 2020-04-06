@@ -43,28 +43,38 @@ class MapCreation():
         self.joint(border[0], border[1])
         return border
 
-    def square(self,stick=-1):
+    def bridge(self,stick=-1,length=5):
+        self.start(stick)
         self.start(stick)
         origin = self.origin
         border = []
         border += self.straight(self.origin)
-        border += self.straight(self.nodeCursor)
-        border += self.straight(self.nodeCursor)
+        for i in range(length-1):
+            border += self.straight(self.nodeCursor)
+        return self.clean(border)
+
+    def circle(self, stick=-1, length=5):
+        self.start(stick)
+        self.start(stick)
+        origin = self.origin
+        border = []
+        border += self.straight(self.origin)
+        for i in range(1, length-1):
+            border += self.straight(self.nodeCursor)
         self.joint(self.nodeCursor, origin)
         return self.clean(border)
 
     def triangle(self,stick=-1):
-        self.start(stick)
-        origin = self.origin
-        border = []
-        border += self.straight(self.origin)
-        border += self.straight(self.nodeCursor)
-        self.joint(self.nodeCursor, origin)
-        return self.clean(border)
+        return self.circle(stick,3)
+
+    def square(self,stick=-1):
+        return self.circle(stick,4)
 
 if __name__ == "__main__":
     map = MapCreation()
     map.straight()
     map.square()
     map.triangle()
+    map.bridge()
+    map.circle()
     map.build()
