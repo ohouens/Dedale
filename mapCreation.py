@@ -53,8 +53,18 @@ class MapCreation():
         self.joint(self.nodeCursor, origin)
         return self.clean(border)
 
+    def triangle(self,stick=-1):
+        self.start(stick)
+        origin = self.origin
+        border = []
+        border += self.straight(self.origin)
+        border += self.straight(self.nodeCursor)
+        self.joint(self.nodeCursor, origin)
+        return self.clean(border)
+
 if __name__ == "__main__":
     map = MapCreation()
     map.straight()
     map.square()
+    map.triangle()
     map.build()
