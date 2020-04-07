@@ -106,10 +106,40 @@ class MapCreation():
     def square(self,stick=-1):
         return self.circle(stick,4)
 
+    def bracket(self, stick=-1):
+        return self.bridge(stick,4)
+
+    def branch(self, stick=-1):
+        return self.bridge(stick,2)
+
 if __name__ == "__main__":
+    #Example of map: March Madness men's basketball championship bracket
+    #available at this link -> https://www.ncaa.com/sites/default/files/public/styles/original/public-s3/images/2019/06/27/2020-NCAA-bracket-March-Madness.jpg?itok=ZFsTQ3uO
     map = MapCreation()
-    c1 = map.square()
-    c2 = map.square()
-    c1, c2 = map.merge((c1,1), (c2,0))
-    c1, c2 = map.merge((c1,2), (c2,3))
+    side = "left"
+    level = {}
+    depth = 5
+    for a in range(2):
+        level[side] = {}
+        for i in range(depth):
+            level[side][i] = []
+            for j in range(2**i):
+                level[side][i].append(map.bracket())
+        for k,v in level[side].items():
+            if(k!=0):
+                for x in range(len(v)):
+                    p=0
+                    if(x%2==1):
+                        p=4
+                    map.merge((level[side][k][x],2), (level[side][k-1][x//2],p))
+        side = "right"
+    map.joint((level["left"][0][0][2]), (level["right"][0][0][2]))
     map.build()
+
+    #Example of map: 2 squares being merged
+    squares = MapCreation()
+    c1 = squares.square()
+    c2 = squares.square()
+    c1, c2 = squares.merge((c1,1), (c2,0))
+    c1, c2 = squares.merge((c1,2), (c2,3))
+    # squares.build()
