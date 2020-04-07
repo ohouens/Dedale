@@ -27,6 +27,7 @@ public class TargetBehaviour extends OneShotBehaviour{
 		String nextNode=null;
 		if(agent.getLockCountdown() <= 0) {
 			agent.changeState(ExploreMultiAgent.State.explo);
+			agent.initCoalition();
 			transition=1;
 			return;
 		}

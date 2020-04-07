@@ -66,6 +66,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int routeCursor = 0;
 	private int maxSpace = 0;
 	
+	private int timeBuffer;
+	private boolean exploDoneBuffer;
+	
 	public void setup() {
 		super.setup();
 		final Object[] args = getArguments();
@@ -322,6 +325,11 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public String getRouteWay() {
+		if(!getLastMove()) {
+			routeCursor--;
+			if(routeCursor < 0)
+				routeCursor = route.size()-1;
+		}
 		String result = route.get(routeCursor);
 		routeCursor++;
 		if(routeCursor >= route.size())
@@ -418,5 +426,22 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	private void setLastMove(boolean lm) {
 		lastMove = lm;
+	}
+	
+	public void initCoalition() {
+		if(getRoute() != null)
+			setRouteCursor(getRoute().indexOf(getCurrentPosition()));
+	}
+	
+	public String compressInfo() {
+		Date date = new Date();
+		long time = date.getTime();
+		return String.valueOf(time)+","+getExploDone();
+	}
+	
+	public void decompressInfo(String info) {
+		String[] compress = info.split(",");
+		timeBuffer = Integer.valueOf(compress[0]);
+		exploDoneBuffer = Boolean.valueOf(compress[1]);
 	}
 }
