@@ -57,7 +57,7 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			if(original)
 				System.out.println(agent.getLocalName()+" - transition to SendFusedMap");
 			else {
-				agent.changeState(State.rewind);
+				agent.changeState(State.target);
 				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
 				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}

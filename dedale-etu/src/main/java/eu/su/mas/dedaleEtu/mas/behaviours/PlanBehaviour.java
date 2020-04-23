@@ -26,7 +26,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		switch(agent.getCurrentState()) {
-			case rewind:
+			case target:
 				transition = 1;
 				System.out.println(agent.getLocalName()+" - transition to TARGET");
 				break;
@@ -39,6 +39,8 @@ public class PlanBehaviour extends OneShotBehaviour{
 					transition = 0;
 					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
 				}else {
+					System.out.println(agent.getLocalName()+" - Leafs are "+agent.getLeaf());
+					System.out.println(agent.getLocalName()+" - Tunnels are "+agent.getTunnel());
 					if(agent.getRoute() == null)
 						agent.setRoute(makeRoute());
 					transition = 3;

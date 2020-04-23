@@ -43,7 +43,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public static final int SHARELOCK = 3;
 	
 	public enum State{
-		rewind, explo, coalition, hunt
+		target, explo, coalition, hunt
 	}
 	
 	private MapRepresentation myMap;
@@ -65,6 +65,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private List<String> route;
 	private int routeCursor = 0;
 	private int maxSpace = 0;
+	
+	private String target;
+	private List<String> tunnel = new ArrayList<>();
+	private List<String> leaf = new ArrayList<>();
 	
 	private int timeBuffer;
 	private boolean exploDoneBuffer;
@@ -169,6 +173,22 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public String getTarget() {
+		return target;
+	}
+	
+	public void setTarget(String t) {
+		target = t;
+	}
+	
+	public List<String> getTunnel(){
+		return tunnel;
+	}
+	
+	public List<String> getLeaf(){
+		return leaf;
 	}
 	
 	public boolean getExploDone() {

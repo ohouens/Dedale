@@ -43,8 +43,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
-		if(agent.getCurrentState() != ExploreMultiAgent.State.rewind)
-			agent.updatePositionMemory(myPosition);
+		agent.updatePositionMemory(myPosition);
 		agent.printMemory();
 		
 		if (myPosition!=null){
@@ -111,6 +110,19 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			
 			//list of observations associated to the currentPosition
 			System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
+			
+			switch(lobs.size()) {
+				case 2:
+					agent.getLeaf().add(myPosition);
+					System.out.println(agent.getLocalName()+" - "+myPosition+" is leaf");
+					break;
+				case 3:
+					agent.getTunnel().add(myPosition);
+					System.out.println(agent.getLocalName()+" - "+myPosition+" is tunnel");
+					break;
+				default:
+					break;
+			}
 			
 			/************************************************
 			 * 				END API CALL ILUSTRATION

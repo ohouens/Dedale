@@ -20,7 +20,7 @@ public class TargetBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		transition = 0;
+		transition = 1;
 		
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();
 		
@@ -28,21 +28,9 @@ public class TargetBehaviour extends OneShotBehaviour{
 		if(agent.getLockCountdown() <= 0) {
 			agent.changeState(ExploreMultiAgent.State.explo);
 			agent.initCoalition();
-			transition=1;
 			return;
 		}
-		int size = agent.getPositionMemory().size();
-		List<String> pm = agent.getPositionMemory();
-		if(size >= 2 && !pm.get(size-2).equals(pm.get(size-1)) && agent.getLastMove()) {
-			nextNode = agent.getPositionMemory().remove((int)size-1);
-			System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
-		}else {
-			agent.getPositionMemory().clear();
-			Random random = new Random();
-			int index = random.nextInt(lobs.size());
-			nextNode = lobs.get(index).getLeft(); 
-			System.out.println(agent.getLocalName()+" - new STOCHASTIC position "+nextNode);
-		}
+		
 		agent.updateLC();
 		
 		/************************************************
