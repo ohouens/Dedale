@@ -56,6 +56,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int motionCounterMemory = 0;
 	private int lastShareMemory = 0;
 	private int lockCountdown = 0;
+	private int timer = 0;
 	private State currentState = State.explo;
 	private List<State> stateMemory = new ArrayList<>(Arrays.asList(State.explo));
 	private List<String> behaviourMemory = new ArrayList<>();
@@ -69,6 +70,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private String target;
 	private List<String> tunnel = new ArrayList<>();
 	private List<String> leaf = new ArrayList<>();
+	private boolean tunnelFlag = false;
 	
 	private int timeBuffer;
 	private boolean exploDoneBuffer;
@@ -173,6 +175,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean getTunnelFlag() {
+		return tunnelFlag;
+	}
+	
+	public void setTunnelFlag(boolean b) {
+		tunnelFlag = b;
 	}
 	
 	public String getTarget() {
@@ -293,6 +303,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void updateLC() {
 		lockCountdown --;
+	}
+	
+	public void updateTimer() {
+		timer++;
+	}
+	
+	public int getTimer() {
+		return timer;
 	}
 	
 	public State getCurrentState() {
@@ -463,5 +481,29 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		String[] compress = info.split(",");
 		timeBuffer = Integer.valueOf(compress[0]);
 		exploDoneBuffer = Boolean.valueOf(compress[1]);
+	}
+	
+
+	public boolean isTunnel(List<String> path) {
+		for(String s : path) {
+			if(!getTunnel().contains(s) && !getLeaf().contains(s)) {
+				setTunnelFlag(false);
+				System.out.println(getLocalName()+" - tunnelFlag down");
+			}
+		}
+		setTunnelFlag(true);
+		System.out.println(getLocalName()+" - tunnelFlag raised");
+		return true;
+	}
+	
+	public boolean isBlocked() {
+		String myPos = getCurrentPosition();
+		if(positionMemory.size() < 2)
+			return false;
+		for(String pos : positionMemory) {
+			if(!myPos.equals(pos))
+				return false;
+		}
+		return true;
 	}
 }

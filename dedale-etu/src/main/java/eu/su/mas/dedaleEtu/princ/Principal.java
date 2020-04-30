@@ -420,7 +420,7 @@ public class Principal {
 		//1) Get the container where the agent will appear
 		c = containerList.get(ConfigurationFile.LOCAL_CONTAINER2_NAME);
 		Assert.assertNotNull("This container does not exist",c);
-		for(int i=1; i<=0; i++) {		
+		for(int i=1; i<=4; i++) {		
 			//2) Give the name of your agent, MUST be the same as the one given in the entities file.
 			agentName="Golem"+String.valueOf(i);
 			
@@ -438,7 +438,7 @@ public class Principal {
 		//1) Get the container where the agent will appear
 		c = containerList.get(ConfigurationFile.LOCAL_CONTAINER2_NAME);
 		Assert.assertNotNull("This container does not exist",c);
-		for(int i=1; i<=2; i++) {
+		for(int i=1; i<=1; i++) {
 			//2) Give the name of your agent, MUST be the same as the one given in the entities file.
 			agentName="Explo"+String.valueOf(i);
 			

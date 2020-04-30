@@ -12,35 +12,48 @@ import jade.core.behaviours.OneShotBehaviour;
 public class TargetBehaviour extends OneShotBehaviour{
 	
 	private int transition;
+	private ExploreMultiAgent agent;
 
 	public TargetBehaviour(AbstractDedaleAgent myAgent) {
 		super(myAgent);
+		agent = (ExploreMultiAgent)myAgent;
 	}
 	
 	@Override
 	public void action() {
-		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		transition = 1;
 		
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();
+		String position = agent.getCurrentPosition();
+		agent.updateView();
 		
-		String nextNode=null;
 		if(agent.getLockCountdown() <= 0) {
+			System.out.println(agent.getLocalName()+" - Target not reach");
 			agent.changeState(ExploreMultiAgent.State.explo);
 			agent.initCoalition();
 			return;
 		}
 		
-		agent.updateLC();
+		if(agent.getTarget().equals(position)) {
+			System.out.println(agent.getLocalName()+" - Target reach !");
+			agent.changeState(ExploreMultiAgent.State.explo);
+			agent.initCoalition();
+			return;
+		}
+
+		String nextNode=null;
+		List<String> openNodes = agent.getOpenNodes();
+		List<String> sp = agent.getMap().getShortestPath(position, agent.getTarget());
+		nextNode = sp.get(0);
+
+		System.out.println(agent.getLocalName()+" - nextNode "+nextNode);
 		
-		/************************************************
-		 * 				END API CALL ILUSTRATION
-		 *************************************************/
 		agent.move(nextNode);
 		if(transition == 1)
 			System.out.println(agent.getLocalName()+" - transition to SWITCH");
 		else
 			System.out.println(agent.getLocalName()+" - Stay in TARGET");
+		agent.updateLC();
 	}
 
 	public int onEnd() {

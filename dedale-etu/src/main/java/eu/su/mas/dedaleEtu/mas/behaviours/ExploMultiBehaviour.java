@@ -46,6 +46,40 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		agent.updatePositionMemory(myPosition);
 		agent.printMemory();
 		
+
+		if(agent.isBlocked()) {
+			System.out.println(agent.getLocalName()+" - Target mode activated");
+			agent.changeState(ExploreMultiAgent.State.target);
+			String target = "";
+			int taille = 1000;
+			if(openNodes.size() > 1) {
+				for(int i=0; i<openNodes.size(); i++) {
+					List<String> inter = myMap.getShortestPath(myPosition, openNodes.get(i));
+					if(!openNodes.get(i).equals(agent.getTarget()) && inter.size() < taille) {
+						target = openNodes.get(i);
+						taille = inter.size();
+//						System.out.println(agent.getLocalName()+" - getTarget="+agent.getTarget()+" newTarget="+target);
+					}
+				}
+			}else {
+				Iterator<String> iter = closedNodes.iterator();
+				while(iter.hasNext()) {
+					String cn = iter.next();
+					List<String> inter = myMap.getShortestPath(myPosition, cn);
+					if(!cn.equals(myPosition) && inter.size() < taille && !agent.getTunnel().contains(cn) && !agent.getLeaf().contains(cn)) {
+						target = cn;
+						taille = inter.size();
+//						System.out.println(agent.getLocalName()+" - cn="+cn+" pos="+myPosition);
+					}
+				}
+			}
+			agent.setTarget(target);
+			agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
+			System.out.println(agent.getLocalName()+" - target "+agent.getTarget());
+			System.out.println(agent.getLocalName()+" - transition to SWITCH");
+			return;
+		}
+		
 		if (myPosition!=null){
 			//List of observable from the agent's current position
 			List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
@@ -75,18 +109,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					}
 					if (nextNode==null) nextNode=nodeId;
 				}
-				
-				System.out.println("OBSERVATIONS: " + listObsInt);
-				for (int i = 0; i < listObsInt.size(); i++) {
-					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-						System.out.println(agent.getLocalName()+" - I can smell the golem from here!");
-						String stenchPos = couple.getLeft();
-						System.out.println(agent.getLocalName()+" - Odor position: " + stenchPos);
-						nextNode = stenchPos;
-						agent.changeState(ExploreMultiAgent.State.hunt);
-						System.out.println(agent.getLocalName()+" - HUNTING Mode activated");
-					}
-				}
 			}
 			
 			//3) while openNodes is not empty, continues.
@@ -100,7 +122,9 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//4) select next move.
 			//4.1 If there exist one open node directly reachable, go for it,
 			//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
+			
 			if (nextNode==null && !openNodes.isEmpty()){
+				agent.setTarget(openNodes.get(0));
 				//no directly accessible openNode
 				//chose one, compute the path and take the first step.
 				List<String> sp = myMap.getShortestPath(myPosition, openNodes.get(0));
@@ -127,6 +151,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			/************************************************
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
+			agent.setTarget(nextNode);
 			agent.move(nextNode);
 			if(transition == 1)
 				System.out.println(agent.getLocalName()+" - transition to SWITCH");
