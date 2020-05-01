@@ -37,10 +37,7 @@ public class PingMapBehaviour extends OneShotBehaviour{
 			ping.addReceiver(new AID(s, AID.ISLOCALNAME));
 			System.out.println(agent.getLocalName()+" - addReceiver ::: "+s);
 		}
-		Date date= new Date();
-		long time = date.getTime();
-		ping.setContent(String.valueOf(time));
-//		ping.setContent("WANT MY MAP ?");
+		ping.setContent(agent.compressInfo());
 		agent.setLastSend(ping);
 		myAgent.send(ping);
 		System.out.println(myAgent.getLocalName()+" - PING");

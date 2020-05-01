@@ -26,7 +26,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		switch(agent.getCurrentState()) {
-			case rewind:
+			case target:
 				transition = 1;
 				System.out.println(agent.getLocalName()+" - transition to TARGET");
 				break;
@@ -35,15 +35,15 @@ public class PlanBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				if(!agent.getExploDone()) {
+//				if(!agent.getExploDone()) {
 					transition = 0;
 					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
-				}else {
-					if(agent.getRoute() == null)
-						agent.setRoute(makeRoute());
-					transition = 3;
-					System.out.println(agent.getLocalName()+" - transition to COALITION");
-				}
+//				}else {
+//					if(agent.getRoute() == null)
+//						agent.setRoute(makeRoute());
+//					transition = 3;
+//					System.out.println(agent.getLocalName()+" - transition to COALITION");
+//				}
 				break;
 		}
 	}

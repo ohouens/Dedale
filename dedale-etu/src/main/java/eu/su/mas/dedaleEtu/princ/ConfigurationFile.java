@@ -70,8 +70,8 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionBisTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
-//	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
-	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapTopology";
+	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapMiniTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/marchMadnessTopology";
 	
