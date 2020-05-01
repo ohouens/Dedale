@@ -12,46 +12,48 @@ import jade.core.behaviours.OneShotBehaviour;
 public class TargetBehaviour extends OneShotBehaviour{
 	
 	private int transition;
+	private ExploreMultiAgent agent;
 
 	public TargetBehaviour(AbstractDedaleAgent myAgent) {
 		super(myAgent);
+		agent = (ExploreMultiAgent)myAgent;
 	}
 	
 	@Override
 	public void action() {
-		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		transition = 0;
+		transition = 1;
 		
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();
+		String position = agent.getCurrentPosition();
+		agent.updateView();
 		
-		String nextNode=null;
 		if(agent.getLockCountdown() <= 0) {
+			System.out.println(agent.getLocalName()+" - Target not reach");
 			agent.changeState(ExploreMultiAgent.State.explo);
-			transition=1;
+			agent.initCoalition();
 			return;
 		}
-		int size = agent.getPositionMemory().size();
-		List<String> pm = agent.getPositionMemory();
-		if(size >= 2 && !pm.get(size-2).equals(pm.get(size-1)) && agent.getLastMove()) {
-			nextNode = agent.getPositionMemory().remove((int)size-1);
-			System.out.println(agent.getLocalName()+" - new REWIND position "+nextNode);
-		}else {
-			agent.getPositionMemory().clear();
-			Random random = new Random();
-			int index = random.nextInt(lobs.size());
-			nextNode = lobs.get(index).getLeft(); 
-			System.out.println(agent.getLocalName()+" - new STOCHASTIC position "+nextNode);
-		}
-		agent.updateLC();
 		
-		/************************************************
-		 * 				END API CALL ILUSTRATION
-		 *************************************************/
+		if(agent.getTarget().equals(position)) {
+			System.out.println(agent.getLocalName()+" - Target reach !");
+			agent.changeState(ExploreMultiAgent.State.explo);
+			agent.initCoalition();
+			return;
+		}
+
+		String nextNode=null;
+		List<String> openNodes = agent.getOpenNodes();
+		List<String> sp = agent.getMap().getShortestPath(position, agent.getTarget());
+		nextNode = sp.get(0);
+
+		System.out.println(agent.getLocalName()+" - nextNode "+nextNode);
+		
 		agent.move(nextNode);
 		if(transition == 1)
 			System.out.println(agent.getLocalName()+" - transition to SWITCH");
 		else
 			System.out.println(agent.getLocalName()+" - Stay in TARGET");
+		agent.updateLC();
 	}
 
 	public int onEnd() {
