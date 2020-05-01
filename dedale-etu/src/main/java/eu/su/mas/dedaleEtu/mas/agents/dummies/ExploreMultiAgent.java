@@ -24,6 +24,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.SendMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SwitchBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SynchronizationBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.TargetBehaviour;
+import eu.su.mas.dedaleEtu.mas.dataTools.Pair;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.AID;
@@ -66,6 +67,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private List<String> route;
 	private int routeCursor = 0;
 	private int maxSpace = 0;
+	private Pair lastOdor; 
+	
 	
 	private String target;
 	private List<String> tunnel = new ArrayList<>();
@@ -505,5 +508,13 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 				return false;
 		}
 		return true;
+	}
+	
+	public void setLastOdor(String stenchPos) {
+		lastOdor = new Pair(this.timer, stenchPos);
+	}
+	
+	public Pair getLastOdor() {
+		return lastOdor;
 	}
 }
