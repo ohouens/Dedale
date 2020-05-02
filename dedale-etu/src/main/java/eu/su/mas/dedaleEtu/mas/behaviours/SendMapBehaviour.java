@@ -56,9 +56,14 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
 		sendMap.setSender(myAgent.getAID());
 		sendMap.addReceiver(agent.getLastReceive().getSender());
-		sendMap.setContent(myMap.serialize(agent.getClosedNodes()));
+		sendMap.setContent(myMap.getBuffer(agent.getLastReceive().getSender().getLocalName()).serialize());
 		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
 		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
+		if(!original) {
+			String name = agent.getLastReceive().getSender().getLocalName();
+			myMap.resetBuffer(name);
+			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
+		}
 	}
 	
 	@Override

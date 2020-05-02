@@ -48,6 +48,11 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			myMap.merge(inter, agent.getClosedNodes(), agent.getOpenNodes());
 			if(original)
 				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
+			else {
+				String name = msgMap.getSender().getLocalName();
+				myMap.resetBuffer(name);
+				System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
+			}
 			ACLMessage ackMap = new ACLMessage(ACLMessage.CONFIRM);
 			ackMap.setSender(agent.getAID());
 			ackMap.addReceiver(msgMap.getSender());

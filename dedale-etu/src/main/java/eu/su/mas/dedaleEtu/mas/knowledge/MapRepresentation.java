@@ -98,6 +98,14 @@ public class MapRepresentation implements Serializable {
     		buffer.put(name, new MapRepresentation());
 		}
 	}
+	
+	public MapRepresentation getBuffer(String name) {
+		return buffer.get(name);
+	}
+	
+	public MapRepresentation getCache(String name) {
+		return cache.get(name);
+	}
 
 	/**
 	 * Add or replace a node and its attribute 
@@ -211,7 +219,7 @@ public class MapRepresentation implements Serializable {
 
 	}
 	
-	public String serialize(Set<String> closedNodes) {
+	public String serialize() {
 		String result = "";
 		Iterator<Node> iter=this.g.iterator();
 		while(iter.hasNext()){
@@ -236,6 +244,8 @@ public class MapRepresentation implements Serializable {
 	}
 	
 	public void merge(String sm, Set<String> closedNodes, List<String> openNodes) {
+		if(sm.equals("|"))
+			return;
 		String[] tab = sm.split("\\|");
 		String listNodes = tab[0];
 		String listEdges = tab[1];
@@ -327,5 +337,9 @@ public class MapRepresentation implements Serializable {
 		viewer.setCloseFramePolicy(FxViewer.CloseFramePolicy.CLOSE_VIEWER);
 		viewer.addDefaultView(true);
 		g.display();
+	}
+
+	public void resetBuffer(String name) {
+		buffer.put(name, new MapRepresentation());
 	}
 }
