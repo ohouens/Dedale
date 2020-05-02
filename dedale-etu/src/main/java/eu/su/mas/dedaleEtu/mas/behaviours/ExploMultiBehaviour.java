@@ -125,14 +125,16 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			
 			// if one of the observable nodes has an odor, then we save it as a memory
 			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
+			int odorCpt = 0;
 			
 			
 			while (iter2.hasNext()) {
 				Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
 				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
-				System.out.println("OBSERVATIONS: " + listObsInt);
+				//System.out.println("OBSERVATIONS: " + listObsInt);
 				for (int i = 0; i < listObsInt.size(); i++) {
 					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+						odorCpt++;
 						System.out.println("I can smell the golem from here!");
 						String stenchPos = StrList.getLeft();
 						System.out.println("Odor position: " + stenchPos);
@@ -143,6 +145,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					}
 				}
 			}
+			if (odorCpt >=2) {
+				agent.getGolemZones().add(myPosition);
+			}
+				
 			
 			if (nextNode==null && !openNodes.isEmpty()){
 				agent.setTarget(openNodes.get(0));

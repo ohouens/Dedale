@@ -68,6 +68,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int routeCursor = 0;
 	private int maxSpace = 0;
 	private Pair lastOdor; 
+	private List<String> golemZones; //list of positions where more than one golem was smelled at once
 	
 	
 	private String target;
@@ -516,5 +517,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public Pair getLastOdor() {
 		return lastOdor;
+	}
+	
+	public List<String> getGolemZones(){
+		return this.golemZones;
 	}
 }
