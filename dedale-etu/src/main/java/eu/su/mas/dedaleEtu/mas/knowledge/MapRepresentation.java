@@ -149,6 +149,12 @@ public class MapRepresentation implements Serializable {
 	 */
 	public void addEdge(String idNode1,String idNode2){
 		try {
+			//Security for post delete buffer
+			if(!nodes.contains(idNode1))
+				addNode(idNode1, MapAttribute.open);
+			if(!nodes.contains(idNode2))
+				addNode(idNode2, MapAttribute.open);
+			//Actual edge adding
 			this.nbEdges++;
 			this.g.addEdge(this.nbEdges.toString(), idNode1, idNode2);
 			if(graph.get(idNode1) == null)
@@ -248,7 +254,9 @@ public class MapRepresentation implements Serializable {
 			return;
 		String[] tab = sm.split("\\|");
 		String listNodes = tab[0];
-		String listEdges = tab[1];
+		String listEdges = ",";
+		if(tab.length == 2)
+			listEdges = tab[1];
 		
 		for(String node : listNodes.split(",")) {
 			if(!node.equals("")) {

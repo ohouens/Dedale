@@ -41,6 +41,9 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);
 		if(checkDone != null) {
+			String name = agent.getLastReceive().getSender().getLocalName();
+			myMap.resetBuffer(name);
+			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
 			transition = 1;
 			if(original)
 				System.out.println(agent.getLocalName()+" - transition to ReceiveFusedMAP");
@@ -56,14 +59,10 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
 		sendMap.setSender(myAgent.getAID());
 		sendMap.addReceiver(agent.getLastReceive().getSender());
+//		sendMap.setContent(myMap.serialize());
 		sendMap.setContent(myMap.getBuffer(agent.getLastReceive().getSender().getLocalName()).serialize());
 		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
 		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
-		if(!original) {
-			String name = agent.getLastReceive().getSender().getLocalName();
-			myMap.resetBuffer(name);
-			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
-		}
 	}
 	
 	@Override

@@ -55,26 +55,18 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			System.out.println(agent.getLocalName()+" - Target mode activated");
 			agent.changeState(ExploreMultiAgent.State.target);
 			String target = "";
-			int taille = 1000;
+			Random r = new Random();
 			if(openNodes.size() > 1) {
-				for(int i=0; i<openNodes.size(); i++) {
-					List<String> inter = myMap.getShortestPath(myPosition, openNodes.get(i));
-					if(!openNodes.get(i).equals(agent.getTarget()) && inter.size() < taille) {
-						target = openNodes.get(i);
-						taille = inter.size();
-//						System.out.println(agent.getLocalName()+" - getTarget="+agent.getTarget()+" newTarget="+target);
+				target = openNodes.get(r.nextInt(openNodes.size()));
+			}else{
+				int cursor = r.nextInt(closedNodes.size());
+				int i = 0;
+				for(String s : closedNodes) {
+					if(i == cursor) {
+						target = s;
+						break;
 					}
-				}
-			}else {
-				Iterator<String> iter = closedNodes.iterator();
-				while(iter.hasNext()) {
-					String cn = iter.next();
-					List<String> inter = myMap.getShortestPath(myPosition, cn);
-					if(!cn.equals(myPosition) && inter.size() < taille && !agent.getTunnel().contains(cn) && !agent.getLeaf().contains(cn)) {
-						target = cn;
-						taille = inter.size();
-//						System.out.println(agent.getLocalName()+" - cn="+cn+" pos="+myPosition);
-					}
+					i++;
 				}
 			}
 			agent.setTarget(target);
@@ -155,6 +147,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			/************************************************
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
+			if(nextNode == null)
+				nextNode = myPosition;
 			agent.setTarget(nextNode);
 			agent.move(nextNode);
 			if(transition == 1)
