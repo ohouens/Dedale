@@ -35,8 +35,12 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		if(agent.getMap() == null)
+		if(agent.getMap() == null) {
+			System.out.println(agent.getLocalName()+" - INIT MAP");
 			agent.setMap(new MapRepresentation());
+			agent.getMap().show();
+			agent.getMap().initPartial(agent.getTeamates());
+		}
 		MapRepresentation myMap = agent.getMap();
 		List<String> openNodes = agent.getOpenNodes();
 		Set<String> closedNodes = agent.getClosedNodes();
@@ -102,7 +106,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					if (!openNodes.contains(nodeId)){
 						openNodes.add(nodeId);
 						myMap.addNode(nodeId, MapAttribute.open);
-						myMap.addEdge(myPosition, nodeId);	
+						myMap.addEdge(myPosition, nodeId);
 					}else{
 						//the node exist, but not necessarily the edge
 						myMap.addEdge(myPosition, nodeId);

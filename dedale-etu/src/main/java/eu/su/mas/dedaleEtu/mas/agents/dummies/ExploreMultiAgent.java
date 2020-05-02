@@ -3,6 +3,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -250,6 +251,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public List<String> getTeamates(){
+		if(agents == null)
+			agents = getListAgents();
 		return agents;
 	}
 	
@@ -399,7 +402,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		    if (result.length > 0) {
 		    	for (int i = 0; i < result.length; i++) {
 		    		if(!result[i].getName().getLocalName().equals(getLocalName())) {
-			    		agents.add(result[i].getName().getLocalName());
+		    			String name = result[i].getName().getLocalName();
+			    		agents.add(name);
 //			    		System.out.println(this.getLocalName()+" FOUND AGENT "+result[i].getName().getLocalName());
 		    		}
 		    	}
@@ -422,8 +426,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public void updateView() {
-		if(myMap == null)
+		if(myMap == null) {
 			myMap = new MapRepresentation();
+			myMap.show();
+		}
 		String myPosition = getCurrentPosition();
 		if(!closedNodes.contains(myPosition))
 			myMap.addNode(myPosition, MapAttribute.closed);
@@ -435,7 +441,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 				if (!openNodes.contains(nodeId)){
 					openNodes.add(nodeId);
 					myMap.addNode(nodeId, MapAttribute.open);
-					myMap.addEdge(myPosition, nodeId);	
+					myMap.addEdge(myPosition, nodeId);
 				}else{
 					//the node exist, but not necessarily the edge
 					myMap.addEdge(myPosition, nodeId);
