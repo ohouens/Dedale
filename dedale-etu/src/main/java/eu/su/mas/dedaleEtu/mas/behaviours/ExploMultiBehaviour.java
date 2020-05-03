@@ -123,6 +123,33 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//4.1 If there exist one open node directly reachable, go for it,
 			//	 otherwise choose one from the openNode list, compute the shortestPath and go for it
 			
+			// if one of the observable nodes has an odor, then we save it as a memory
+			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
+			int odorCpt = 0;
+			
+			
+			while (iter2.hasNext()) {
+				Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
+				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
+				//System.out.println("OBSERVATIONS: " + listObsInt);
+				for (int i = 0; i < listObsInt.size(); i++) {
+					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+						odorCpt++;
+						System.out.println("I can smell the golem from here!");
+						String stenchPos = StrList.getLeft();
+						System.out.println("Odor position: " + stenchPos);
+						agent.setLastOdor(stenchPos);
+						System.out.println("Odor memory: " + agent.getLastOdor().toString());
+						// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
+						// càd on doit verifier que la case où on veut aller est occupée
+					}
+				}
+			}
+			if (odorCpt >=2) {
+				agent.getGolemZones().add(myPosition);
+			}
+				
+			
 			if (nextNode==null && !openNodes.isEmpty()){
 				agent.setTarget(openNodes.get(0));
 				//no directly accessible openNode
