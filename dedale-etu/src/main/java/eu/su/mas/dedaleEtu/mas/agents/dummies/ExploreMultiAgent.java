@@ -80,14 +80,6 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int timeBuffer;
 	private boolean exploDoneBuffer;
 	
-	private String target;
-	private List<String> tunnel = new ArrayList<>();
-	private List<String> leaf = new ArrayList<>();
-	private boolean tunnelFlag = false;
-	
-	private int timeBuffer;
-	private boolean exploDoneBuffer;
-	
 	public void setup() {
 		super.setup();
 		final Object[] args = getArguments();
@@ -465,7 +457,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void move(String nextNode) {
 		try {
 			doWait(500);
-//			System.in.read();
+			System.in.read();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
