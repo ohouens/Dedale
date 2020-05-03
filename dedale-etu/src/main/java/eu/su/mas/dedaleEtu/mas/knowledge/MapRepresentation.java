@@ -62,6 +62,12 @@ public class MapRepresentation implements Serializable {
 	
 	private Set<String> nodes = new HashSet<>();
 	private HashMap<String, Set<String>> graph = new HashMap<>();
+	
+	private HashMap<String, MapRepresentation> cache = new HashMap<>();
+	private HashMap<String, MapRepresentation> buffer = new HashMap<>();
+	private List<String> agents;
+	
+	private Set<String> closedNodes = new HashSet<>();
 
 
 	public MapRepresentation() {
@@ -70,13 +76,35 @@ public class MapRepresentation implements Serializable {
 		this.g= new SingleGraph("My world vision");
 		this.g.setAttribute("ui.stylesheet",nodeStyle);
 
-		Platform.runLater(() -> {
-			openGui();
-		});
+//		Platform.runLater(() -> {
+//			openGui();
+//		});
 	
 		//this.viewer = this.g.display();
 
 		this.nbEdges=0;
+	}
+	
+	public void show() {
+		Platform.runLater(() -> {
+			openGui();
+		});
+	}
+	
+	public void initPartial(List<String> agents) {
+		this.agents = agents;
+		for(String name : agents) {
+    		cache.put(name, new MapRepresentation());
+    		buffer.put(name, new MapRepresentation());
+		}
+	}
+	
+	public MapRepresentation getBuffer(String name) {
+		return buffer.get(name);
+	}
+	
+	public MapRepresentation getCache(String name) {
+		return cache.get(name);
 	}
 
 	/**
@@ -88,6 +116,7 @@ public class MapRepresentation implements Serializable {
 		Node n;
 		if (this.g.getNode(id)==null){
 			n=this.g.addNode(id);
+			
 		}else{
 			n=this.g.getNode(id);
 		}
@@ -95,6 +124,22 @@ public class MapRepresentation implements Serializable {
 		n.setAttribute("ui.class", mapAttribute.toString());
 		n.setAttribute("ui.label",id);
 		nodes.add(id);
+		//adding closed node
+		if(mapAttribute == MapAttribute.closed && !closedNodes.contains(id))
+			closedNodes.add(id);
+		//Partial sharing
+		if(cache.size() > 0) {
+			for(String name : agents) {
+				if(cache.get(name).g.getNode(id) == null) {
+					cache.get(name).addNode(id, mapAttribute);
+					buffer.get(name).addNode(id, mapAttribute);
+				}
+				if(cache.get(name).g.getNode(id) != null && mapAttribute == MapAttribute.closed && !cache.get(name).closedNodes.contains(id)) {
+					cache.get(name).addNode(id, mapAttribute);
+					buffer.get(name).addNode(id, mapAttribute);
+				}
+			}
+		}
 	}
 
 	/**
@@ -104,6 +149,12 @@ public class MapRepresentation implements Serializable {
 	 */
 	public void addEdge(String idNode1,String idNode2){
 		try {
+			//Security for post delete buffer
+			if(!nodes.contains(idNode1))
+				addNode(idNode1, MapAttribute.open);
+			if(!nodes.contains(idNode2))
+				addNode(idNode2, MapAttribute.open);
+			//Actual edge adding
 			this.nbEdges++;
 			this.g.addEdge(this.nbEdges.toString(), idNode1, idNode2);
 			if(graph.get(idNode1) == null)
@@ -112,11 +163,17 @@ public class MapRepresentation implements Serializable {
 				graph.put(idNode2, new HashSet<>());
 			graph.get(idNode1).add(idNode2);
 			graph.get(idNode2).add(idNode1);
+			//Partial sharing
+			if(cache.size() > 0) {
+				for(String name : agents) {
+					cache.get(name).addEdge(idNode1, idNode2);
+					buffer.get(name).addEdge(idNode1, idNode2);
+				}
+			}
 		}catch (EdgeRejectedException e){
 			//Do not add an already existing one
 			this.nbEdges--;
 		}
-
 	}
 
 	/**
@@ -168,7 +225,7 @@ public class MapRepresentation implements Serializable {
 
 	}
 	
-	public String serialize(Set<String> closedNodes) {
+	public String serialize() {
 		String result = "";
 		Iterator<Node> iter=this.g.iterator();
 		while(iter.hasNext()){
@@ -193,9 +250,13 @@ public class MapRepresentation implements Serializable {
 	}
 	
 	public void merge(String sm, Set<String> closedNodes, List<String> openNodes) {
+		if(sm.equals("|"))
+			return;
 		String[] tab = sm.split("\\|");
 		String listNodes = tab[0];
-		String listEdges = tab[1];
+		String listEdges = ",";
+		if(tab.length == 2)
+			listEdges = tab[1];
 		
 		for(String node : listNodes.split(",")) {
 			if(!node.equals("")) {
@@ -232,6 +293,10 @@ public class MapRepresentation implements Serializable {
 	
 	public Iterator<String> getNeighbor(String node){
 		return graph.get(node).iterator();
+	}
+	
+	public Set<String> getEdges(String node){
+		return graph.get(node);
 	}
 
 	
@@ -280,5 +345,9 @@ public class MapRepresentation implements Serializable {
 		viewer.setCloseFramePolicy(FxViewer.CloseFramePolicy.CLOSE_VIEWER);
 		viewer.addDefaultView(true);
 		g.display();
+	}
+
+	public void resetBuffer(String name) {
+		buffer.put(name, new MapRepresentation());
 	}
 }

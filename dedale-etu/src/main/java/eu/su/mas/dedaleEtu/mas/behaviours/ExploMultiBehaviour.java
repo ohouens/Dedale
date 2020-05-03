@@ -35,8 +35,12 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		if(agent.getMap() == null)
+		if(agent.getMap() == null) {
+			System.out.println(agent.getLocalName()+" - INIT MAP");
 			agent.setMap(new MapRepresentation());
+			agent.getMap().show();
+			agent.getMap().initPartial(agent.getTeamates());
+		}
 		MapRepresentation myMap = agent.getMap();
 		List<String> openNodes = agent.getOpenNodes();
 		Set<String> closedNodes = agent.getClosedNodes();
@@ -51,26 +55,18 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			System.out.println(agent.getLocalName()+" - Target mode activated");
 			agent.changeState(ExploreMultiAgent.State.target);
 			String target = "";
-			int taille = 1000;
+			Random r = new Random();
 			if(openNodes.size() > 1) {
-				for(int i=0; i<openNodes.size(); i++) {
-					List<String> inter = myMap.getShortestPath(myPosition, openNodes.get(i));
-					if(!openNodes.get(i).equals(agent.getTarget()) && inter.size() < taille) {
-						target = openNodes.get(i);
-						taille = inter.size();
-//						System.out.println(agent.getLocalName()+" - getTarget="+agent.getTarget()+" newTarget="+target);
+				target = openNodes.get(r.nextInt(openNodes.size()));
+			}else{
+				int cursor = r.nextInt(closedNodes.size());
+				int i = 0;
+				for(String s : closedNodes) {
+					if(i == cursor) {
+						target = s;
+						break;
 					}
-				}
-			}else {
-				Iterator<String> iter = closedNodes.iterator();
-				while(iter.hasNext()) {
-					String cn = iter.next();
-					List<String> inter = myMap.getShortestPath(myPosition, cn);
-					if(!cn.equals(myPosition) && inter.size() < taille && !agent.getTunnel().contains(cn) && !agent.getLeaf().contains(cn)) {
-						target = cn;
-						taille = inter.size();
-//						System.out.println(agent.getLocalName()+" - cn="+cn+" pos="+myPosition);
-					}
+					i++;
 				}
 			}
 			agent.setTarget(target);
@@ -102,7 +98,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 					if (!openNodes.contains(nodeId)){
 						openNodes.add(nodeId);
 						myMap.addNode(nodeId, MapAttribute.open);
-						myMap.addEdge(myPosition, nodeId);	
+						myMap.addEdge(myPosition, nodeId);
 					}else{
 						//the node exist, but not necessarily the edge
 						myMap.addEdge(myPosition, nodeId);
@@ -178,6 +174,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			/************************************************
 			 * 				END API CALL ILUSTRATION
 			 *************************************************/
+			if(nextNode == null)
+				nextNode = myPosition;
 			agent.setTarget(nextNode);
 			agent.move(nextNode);
 			if(transition == 1)
