@@ -1,5 +1,5 @@
 package eu.su.mas.dedaleEtu.mas.dataTools;
-
+//
 public class Pair<L,R> {
 
 	  private final L left;
