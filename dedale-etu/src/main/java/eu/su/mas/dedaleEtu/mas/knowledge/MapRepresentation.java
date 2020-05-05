@@ -68,6 +68,7 @@ public class MapRepresentation implements Serializable {
 	private List<String> agents;
 	
 	private Set<String> closedNodes = new HashSet<>();
+	private String nodeMax;
 
 
 	public MapRepresentation() {
@@ -284,6 +285,32 @@ public class MapRepresentation implements Serializable {
 			if(!edge.equals("")) {
 				addEdge(edge.split(":")[0], edge.split(":")[1]);
 			}
+		}
+	}
+	
+	public String getNodeMax() {
+		if (nodeMax ==null) {
+			int degreMax = 0;
+			for (String key: graph.keySet()) {
+				if (graph.get(key).size()>degreMax) {
+					nodeMax = key;
+				}
+				//if there are multiple nodes with the maximum degree, then we take the first (lexicography ordered)
+				else if (graph.get(key).size() == degreMax) {
+					int order = nodeMax.compareTo(key);
+					if (order>0) {
+						nodeMax = key;
+					}
+					else if (order == 0) {
+						System.out.println("Error in getNodeMax, nodes with same id");
+					}
+					// otherwise, order < 0, so nodeMax goes first in the lexicographical order
+				}
+			}
+			return nodeMax;
+		}
+		else {
+			return nodeMax;
 		}
 	}
 	
