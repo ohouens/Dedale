@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.graphstream.algorithm.Dijkstra;
@@ -19,6 +20,7 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 
 import dataStructures.serializableGraph.*;
+import eu.su.mas.dedaleEtu.mas.dataTools.Pair;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import javafx.application.Platform;
 
@@ -63,11 +65,12 @@ public class MapRepresentation implements Serializable {
 	private Set<String> nodes = new HashSet<>();
 	private HashMap<String, Set<String>> graph = new HashMap<>();
 	
-	private HashMap<String, MapRepresentation> cache = new HashMap<>();
 	private HashMap<String, MapRepresentation> buffer = new HashMap<>();
 	private List<String> agents;
 	
 	private Set<String> closedNodes = new HashSet<>();
+	
+	private HashMap<String, Integer> odors = new HashMap<>();
 
 
 	public MapRepresentation() {
@@ -93,18 +96,20 @@ public class MapRepresentation implements Serializable {
 	
 	public void initPartial(List<String> agents) {
 		this.agents = agents;
-		for(String name : agents) {
-    		cache.put(name, new MapRepresentation());
+		for(String name : agents)
     		buffer.put(name, new MapRepresentation());
-		}
 	}
 	
 	public MapRepresentation getBuffer(String name) {
 		return buffer.get(name);
 	}
 	
-	public MapRepresentation getCache(String name) {
-		return cache.get(name);
+	public void putOdor(String pos, int timer){
+		odors.put(pos, timer);
+		if(buffer.size() > 0) {
+			for(String name : agents)
+				buffer.get(name).putOdor(pos, timer);
+		}
 	}
 
 	/**
@@ -128,16 +133,12 @@ public class MapRepresentation implements Serializable {
 		if(mapAttribute == MapAttribute.closed && !closedNodes.contains(id))
 			closedNodes.add(id);
 		//Partial sharing
-		if(cache.size() > 0) {
+		if(buffer.size() > 0) {
 			for(String name : agents) {
-				if(cache.get(name).g.getNode(id) == null) {
-					cache.get(name).addNode(id, mapAttribute);
+				if(g.getNode(id) == null)
 					buffer.get(name).addNode(id, mapAttribute);
-				}
-				if(cache.get(name).g.getNode(id) != null && mapAttribute == MapAttribute.closed && !cache.get(name).closedNodes.contains(id)) {
-					cache.get(name).addNode(id, mapAttribute);
+				if(g.getNode(id) != null && mapAttribute == MapAttribute.closed && !closedNodes.contains(id))
 					buffer.get(name).addNode(id, mapAttribute);
-				}
 			}
 		}
 	}
@@ -164,11 +165,9 @@ public class MapRepresentation implements Serializable {
 			graph.get(idNode1).add(idNode2);
 			graph.get(idNode2).add(idNode1);
 			//Partial sharing
-			if(cache.size() > 0) {
-				for(String name : agents) {
-					cache.get(name).addEdge(idNode1, idNode2);
+			if(buffer.size() > 0) {
+				for(String name : agents) 
 					buffer.get(name).addEdge(idNode1, idNode2);
-				}
 			}
 		}catch (EdgeRejectedException e){
 			//Do not add an already existing one
@@ -245,18 +244,29 @@ public class MapRepresentation implements Serializable {
 			Node tn=e.getTargetNode();
 			result += sn.getId()+":"+tn.getId()+",";
 		}
-//		System.out.println("result: "+result);
+		
+		result += "|";
+		
+		Iterator<Entry<String, Integer>> iterO = this.odors.entrySet().iterator();
+		while(iterO.hasNext()) {
+			Entry<String, Integer> o = iterO.next();
+			result += o.getKey()+":"+o.getValue()+",";
+		}
+//		System.out.println("result::::::::: "+result);
 		return result;
 	}
 	
 	public void merge(String sm, Set<String> closedNodes, List<String> openNodes) {
-		if(sm.equals("|"))
-			return;
 		String[] tab = sm.split("\\|");
-		String listNodes = tab[0];
+		String listNodes = ",";
 		String listEdges = ",";
-		if(tab.length == 2)
+		String listOdors = ",";
+		if(tab.length >= 1)
+			listNodes = tab[0];
+		if(tab.length >= 2)
 			listEdges = tab[1];
+		if(tab.length >= 3)
+			listOdors = tab[2];
 		
 		for(String node : listNodes.split(",")) {
 			if(!node.equals("")) {
@@ -283,6 +293,19 @@ public class MapRepresentation implements Serializable {
 		for(String edge : listEdges.split(",")){
 			if(!edge.equals("")) {
 				addEdge(edge.split(":")[0], edge.split(":")[1]);
+			}
+		}
+		
+		for(String odor : listOdors.split(",")) {
+			if(!odor.contentEquals("")) {
+				String id = odor.split(":")[0];
+				int time = Integer.valueOf(odor.split(":")[1]);
+				if(!odors.containsKey(id))
+					odors.put(id, time);
+				else {
+					if(odors.get(id) < time)
+						odors.put(id,time);
+				}
 			}
 		}
 	}

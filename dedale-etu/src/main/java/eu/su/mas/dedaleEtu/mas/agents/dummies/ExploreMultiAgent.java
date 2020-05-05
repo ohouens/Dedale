@@ -457,7 +457,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void move(String nextNode) {
 		try {
 			doWait(500);
-			System.in.read();
+//			System.in.read();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -519,6 +519,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void setLastOdor(String stenchPos) {
 		lastOdor = new Pair(this.timer, stenchPos);
+		myMap.putOdor(stenchPos, timer);
 	}
 	
 	public Pair getLastOdor() {
