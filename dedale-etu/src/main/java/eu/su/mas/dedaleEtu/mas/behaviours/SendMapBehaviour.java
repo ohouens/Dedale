@@ -41,7 +41,7 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);
 		if(checkDone != null) {
-			String name = agent.getLastReceive().getSender().getLocalName();
+			String name = checkDone.getSender().getLocalName();
 			myMap.resetBuffer(name);
 			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
 			transition = 1;

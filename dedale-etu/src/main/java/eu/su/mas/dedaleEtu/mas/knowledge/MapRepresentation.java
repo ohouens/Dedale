@@ -307,11 +307,16 @@ public class MapRepresentation implements Serializable {
 			if(!odor.contentEquals("")) {
 				String id = odor.split(":")[0];
 				int time = Integer.valueOf(odor.split(":")[1]);
-				if(!odors.containsKey(id))
+				System.out.println("MERGE - odor:"+id+","+time);
+				if(!odors.containsKey(id)) {
 					odors.put(id, time);
+					System.out.println("MERGE - HIT");
+				}
 				else {
-					if(odors.get(id) < time)
+					if(odors.get(id) < time) {
 						odors.put(id,time);
+						System.out.println("MERGE - HIT");
+					}else  System.out.println("MERGE - MISS");
 				}
 			}
 		}

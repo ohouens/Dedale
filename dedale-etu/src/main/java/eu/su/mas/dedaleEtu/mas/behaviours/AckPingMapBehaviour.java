@@ -27,7 +27,7 @@ public class AckPingMapBehaviour extends OneShotBehaviour{
 		ACLMessage ack = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 		ack.setSender(myAgent.getAID());
 		ack.addReceiver(ping.getSender());
-		ack.setContent(agent.compressInfo());
+		ack.setContent(agent.compressInfo(ping.getSender().getLocalName()));
 		agent.setLastSend(ack);
 		((AbstractDedaleAgent)myAgent).sendMessage(ack);
 		System.out.println(myAgent.getLocalName()+" - ACK PING");

@@ -23,23 +23,19 @@ public class SynchronizationBehaviour extends OneShotBehaviour{
 		agent.updateView();
 		ACLMessage MPing = agent.getLastSend();
 		ACLMessage HPing = agent.getLastReceive();
-//		if(Long.parseLong(HPing.getContent()) == Long.parseLong(MPing.getContent())) {
-			String s1 = agent.getLocalName();
-			String s2 = HPing.getSender().getLocalName();
-			if(Integer.parseInt(s1.substring(s1.length() - 1)) < Integer.parseInt(s2.substring(s2.length() - 1))) {
-				transition = 1;
-				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
-				return;
-			}
-			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
-//		}else {
-//			if(Long.parseLong(HPing.getContent()) < Long.parseLong(MPing.getContent())) {
-//				transition = 1;
-//				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
-//				return;
-//			}
-//			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
-//		}
+		String s1 = agent.getLocalName();
+		String s2 = HPing.getSender().getLocalName();
+		if(agent.getExploDoneBuffer() && agent.getExploDone() || (agent.getBufferSizeBuffer()==0 && agent.getMap().getBuffer(s2).getAllNodes().size()==0)) {
+			transition = 2;
+			System.out.println(agent.getLocalName()+" - Transition to Switch");
+			return;
+		}
+		if(agent.getBufferSizeBuffer() < agent.getMap().getBuffer(s2).getAllNodes().size()) {
+			transition = 1;
+			System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
+			return;
+		}
+		System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
 	}
 	
 	@Override

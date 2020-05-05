@@ -77,7 +77,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private List<String> leaf = new ArrayList<>();
 	private boolean tunnelFlag = false;
 	
-	private int timeBuffer;
+	private int bufferSizeBuffer;
 	private boolean exploDoneBuffer;
 	
 	public void setup() {
@@ -143,6 +143,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		
 		fsm.registerTransition("Synchronization", "ReceiveOriginalMap", 0, all);
 		fsm.registerTransition("Synchronization", "SendOriginalMap", 1, all);
+		fsm.registerTransition("Synchronization", "Switch", 2, all);
 
 		fsm.registerTransition("SendOriginalMap", "SendOriginalMap", 0, all);
 		fsm.registerTransition("SendOriginalMap", "ReceiveFusedMap", 1, all);
@@ -180,6 +181,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public int getBufferSizeBuffer() {
+		return bufferSizeBuffer;
+	}
+	
+	public boolean getExploDoneBuffer() {
+		return exploDoneBuffer;
 	}
 	
 	public boolean getTunnelFlag() {
@@ -481,15 +490,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 			setRouteCursor(getRoute().indexOf(getCurrentPosition()));
 	}
 	
-	public String compressInfo() {
-		Date date = new Date();
-		long time = date.getTime();
-		return String.valueOf(time)+","+getExploDone();
+	public String compressInfo(String agent) {
+		int nb = myMap.getBuffer(agent).getAllNodes().size();
+		return String.valueOf(nb)+","+getExploDone();
 	}
 	
 	public void decompressInfo(String info) {
 		String[] compress = info.split(",");
-		timeBuffer = Integer.valueOf(compress[0]);
+		bufferSizeBuffer = Integer.valueOf(compress[0]);
 		exploDoneBuffer = Boolean.valueOf(compress[1]);
 	}
 	
