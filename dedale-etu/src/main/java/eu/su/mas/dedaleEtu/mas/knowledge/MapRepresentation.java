@@ -290,13 +290,16 @@ public class MapRepresentation implements Serializable {
 	
 	public String getNodeMax() {
 		if (nodeMax ==null) {
-			int degreMax = 0;
+			int degreeMax = 0;
 			for (String key: graph.keySet()) {
-				if (graph.get(key).size()>degreMax) {
+				int degree = graph.get(key).size();
+				System.out.println("node, degree: " + key + ", " + degree);
+				if (degree > degreeMax) {
 					nodeMax = key;
+					degreeMax = degree;
 				}
 				//if there are multiple nodes with the maximum degree, then we take the first (lexicography ordered)
-				else if (graph.get(key).size() == degreMax) {
+				else if (degree == degreeMax) {
 					int order = nodeMax.compareTo(key);
 					if (order>0) {
 						nodeMax = key;
