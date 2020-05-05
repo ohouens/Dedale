@@ -118,6 +118,20 @@ public class MapRepresentation implements Serializable {
 	 * @param mapAttribute associated state of the node
 	 */
 	public void addNode(String id,MapAttribute mapAttribute){
+		//Partial sharing
+		if(buffer.size() > 0) {
+			for(String name : agents) {
+//				System.out.println(id+"  TRY FOR "+name);
+				if(g.getNode(id) == null) {
+					buffer.get(name).addNode(id, mapAttribute);
+//					System.out.println(id+"  SUCCESS FOR "+name);
+				}
+				if(g.getNode(id) != null && mapAttribute == MapAttribute.closed && !closedNodes.contains(id)) {
+					buffer.get(name).addNode(id, mapAttribute);
+//					System.out.println(id+"  SUCCESS FOR "+name);
+				}
+			}
+		}
 		Node n;
 		if (this.g.getNode(id)==null){
 			n=this.g.addNode(id);
@@ -130,16 +144,9 @@ public class MapRepresentation implements Serializable {
 		n.setAttribute("ui.label",id);
 		nodes.add(id);
 		//adding closed node
-		if(mapAttribute == MapAttribute.closed && !closedNodes.contains(id))
-			closedNodes.add(id);
-		//Partial sharing
-		if(buffer.size() > 0) {
-			for(String name : agents) {
-				if(g.getNode(id) == null)
-					buffer.get(name).addNode(id, mapAttribute);
-				if(g.getNode(id) != null && mapAttribute == MapAttribute.closed && !closedNodes.contains(id))
-					buffer.get(name).addNode(id, mapAttribute);
-			}
+		if(mapAttribute == MapAttribute.closed && !this.closedNodes.contains(id)) {
+			this.closedNodes.add(id);
+//			System.out.println(id+"  CLOOOOOOOOOSEDD");
 		}
 	}
 
@@ -150,6 +157,11 @@ public class MapRepresentation implements Serializable {
 	 */
 	public void addEdge(String idNode1,String idNode2){
 		try {
+			//Partial sharing
+			if(buffer.size() > 0) {
+				for(String name : agents) 
+					buffer.get(name).addEdge(idNode1, idNode2);
+			}
 			//Security for post delete buffer
 			if(!nodes.contains(idNode1))
 				addNode(idNode1, MapAttribute.open);
@@ -164,11 +176,6 @@ public class MapRepresentation implements Serializable {
 				graph.put(idNode2, new HashSet<>());
 			graph.get(idNode1).add(idNode2);
 			graph.get(idNode2).add(idNode1);
-			//Partial sharing
-			if(buffer.size() > 0) {
-				for(String name : agents) 
-					buffer.get(name).addEdge(idNode1, idNode2);
-			}
 		}catch (EdgeRejectedException e){
 			//Do not add an already existing one
 			this.nbEdges--;
