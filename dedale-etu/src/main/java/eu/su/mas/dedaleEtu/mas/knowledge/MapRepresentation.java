@@ -69,7 +69,7 @@ public class MapRepresentation implements Serializable {
 	private List<String> agents;
 	
 	private Set<String> closedNodes = new HashSet<>();
-	
+	private String nodeMax;
 	private HashMap<String, Integer> odors = new HashMap<>();
 
 

@@ -518,11 +518,16 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		String myPos = getCurrentPosition();
 		if(positionMemory.size() < 2)
 			return false;
-		for(String pos : positionMemory) {
-			if(!myPos.equals(pos))
-				return false;
+		//for(String pos : positionMemory) {
+			//if(!myPos.equals(pos))
+		//		return false;
+		//}
+		//return true;
+		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos)) {
+			System.out.println("Blocked because: " + positionMemory);
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	public void setLastOdor(String stenchPos) {
