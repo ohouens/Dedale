@@ -120,17 +120,8 @@ public class MapRepresentation implements Serializable {
 	public void addNode(String id,MapAttribute mapAttribute){
 		//Partial sharing
 		if(buffer.size() > 0) {
-			for(String name : agents) {
-//				System.out.println(id+"  TRY FOR "+name);
-				if(g.getNode(id) == null) {
-					buffer.get(name).addNode(id, mapAttribute);
-//					System.out.println(id+"  SUCCESS FOR "+name);
-				}
-				if(g.getNode(id) != null && mapAttribute == MapAttribute.closed && !closedNodes.contains(id)) {
-					buffer.get(name).addNode(id, mapAttribute);
-//					System.out.println(id+"  SUCCESS FOR "+name);
-				}
-			}
+			for(String name : agents)
+				buffer.get(name).addNode(id, mapAttribute);
 		}
 		Node n;
 		if (this.g.getNode(id)==null){
