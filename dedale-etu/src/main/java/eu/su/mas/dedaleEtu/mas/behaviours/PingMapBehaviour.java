@@ -23,14 +23,7 @@ public class PingMapBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		
-		if(agent.getTeamates() == null)
-			agent.setTeamates(agent.getListAgents());
 		List<String>agents = agent.getTeamates();
-		
-		if(agent.getMap() == null)
-			agent.setMap(new MapRepresentation());
-		
 		
 		for(String s : agents) {
 			ACLMessage ping = new ACLMessage(ACLMessage.REQUEST);

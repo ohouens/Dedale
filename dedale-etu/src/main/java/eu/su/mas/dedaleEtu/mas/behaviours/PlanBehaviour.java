@@ -35,6 +35,16 @@ public class PlanBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
+				if(agent.isBlocked()) {
+					transition = 1;
+					System.out.println(agent.getLocalName()+" - Target mode activated");
+					agent.changeState(ExploreMultiAgent.State.target);
+					agent.randomTarget();
+					agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
+					System.out.println(agent.getLocalName()+" - target "+agent.getTarget());
+					System.out.println(agent.getLocalName()+" - transition to TARGET");
+					return;
+				}
 				if(!agent.getExploDone()) {
 					transition = 0;
 					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
@@ -43,6 +53,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 						agent.setRoute(makeRoute());
 					transition = 3;
 					System.out.println(agent.getLocalName()+" - transition to COALITION");
+					
 				}
 				break;
 		}

@@ -78,13 +78,6 @@ public class MapRepresentation implements Serializable {
 		System.setProperty("org.graphstream.ui", "javafx");
 		this.g= new SingleGraph("My world vision");
 		this.g.setAttribute("ui.stylesheet",nodeStyle);
-
-//		Platform.runLater(() -> {
-//			openGui();
-//		});
-	
-		//this.viewer = this.g.display();
-
 		this.nbEdges=0;
 	}
 	
@@ -120,8 +113,10 @@ public class MapRepresentation implements Serializable {
 	public void addNode(String id,MapAttribute mapAttribute){
 		//Partial sharing
 		if(buffer.size() > 0) {
-			for(String name : agents)
+			for(String name : agents) {
 				buffer.get(name).addNode(id, mapAttribute);
+				System.out.println("Preparation to "+name+" Node size: "+getBuffer(name).getAllNodes().size());
+			}
 		}
 		Node n;
 		if (this.g.getNode(id)==null){
@@ -314,7 +309,9 @@ public class MapRepresentation implements Serializable {
 	}
 	
 	public Set<String> getAllNodes() {
-		return new HashSet<>(nodes);
+		if(nodes == null)
+			nodes = new HashSet<>();
+		return nodes;
 	}
 	
 	public Iterator<String> getNeighbor(String node){
@@ -374,6 +371,7 @@ public class MapRepresentation implements Serializable {
 	}
 
 	public void resetBuffer(String name) {
+		buffer.remove(name);
 		buffer.put(name, new MapRepresentation());
 	}
 }

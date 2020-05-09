@@ -21,12 +21,14 @@ public class SwitchBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		transition = 0;
+		agent.updateView();
 		agent.updateTimer();
 		System.out.println(agent.getTimer());
 		
 		MessageTemplate tap = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		ACLMessage testAckPing = agent.receive(tap);
 		if(testAckPing != null) {
+			agent.ping(ACLMessage.PROPAGATE, "", testAckPing.getSender());
 			transition = 2;
 			agent.decompressInfo(testAckPing.getContent());
 			agent.setLastReceive(testAckPing);

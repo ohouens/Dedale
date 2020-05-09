@@ -27,17 +27,16 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		transition = 0;
 		ExploreMultiAgent agent = ((ExploreMultiAgent) myAgent);
 		agent.updateBehaviourMemory("SENDMAP");
-		boolean stop = true;
-		for(String s : agent.getBehaviourMemory()) {
-			if(!s.equals("SENDMAP"))
-				stop = false;
-		}
-		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
-			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
-			agent.getBehaviourMemory().clear();
-			transition = 2;
-			return;
-		}
+		
+		myMap = agent.getMap();
+		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
+		sendMap.setSender(myAgent.getAID());
+		sendMap.addReceiver(agent.getLastReceive().getSender());
+//		sendMap.setContent(myMap.serialize());
+		sendMap.setContent(agent.getToSend().serialize());
+		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
+		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
+		
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);
 		if(checkDone != null) {
@@ -55,14 +54,17 @@ public class SendMapBehaviour extends OneShotBehaviour{
 			return;
 		}
 		
-		myMap = agent.getMap();
-		ACLMessage sendMap = new ACLMessage(ACLMessage.PROPAGATE);
-		sendMap.setSender(myAgent.getAID());
-		sendMap.addReceiver(agent.getLastReceive().getSender());
-//		sendMap.setContent(myMap.serialize());
-		sendMap.setContent(myMap.getBuffer(agent.getLastReceive().getSender().getLocalName()).serialize());
-		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
-		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
+		boolean stop = true;
+		for(String s : agent.getBehaviourMemory())
+			if(!s.equals("SENDMAP"))
+				stop = false;
+		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
+			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
+			agent.setLastReceive(null);
+			agent.setLastSend(null);
+			agent.getBehaviourMemory().clear();
+			transition = 2;
+		}
 	}
 	
 	@Override

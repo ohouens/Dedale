@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import dataStructures.tuple.Couple;
@@ -80,6 +81,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private int bufferSizeBuffer;
 	private boolean exploDoneBuffer;
 	
+	private MapRepresentation toSend;
+	
+	private FSMBehaviour fsm;
+	
 	public void setup() {
 		super.setup();
 		final Object[] args = getArguments();
@@ -108,7 +113,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		 * 
 		 ************************************************/
 
-		FSMBehaviour fsm = new FSMBehaviour(this) {
+		fsm = new FSMBehaviour(this) {
 			public int onEnd() {
 				System.out.println("FSM behaviour terminé");
 				myAgent.doDelete();
@@ -147,17 +152,17 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 
 		fsm.registerTransition("SendOriginalMap", "SendOriginalMap", 0, all);
 		fsm.registerTransition("SendOriginalMap", "ReceiveFusedMap", 1, all);
-		fsm.registerTransition("SendOriginalMap", "AckPingMap", 2, all);
+		fsm.registerTransition("SendOriginalMap", "Switch", 2, all);
 		fsm.registerTransition("ReceiveOriginalMap", "ReceiveOriginalMap", 0, all);
 		fsm.registerTransition("ReceiveOriginalMap", "SendFusedMap", 1, all);
-		fsm.registerTransition("ReceiveOriginalMap", "AckPingMap", 2, all);
+		fsm.registerTransition("ReceiveOriginalMap", "Switch", 2, all);
 		
 		fsm.registerTransition("SendFusedMap", "SendFusedMap", 0, all);
 		fsm.registerTransition("SendFusedMap", "Planification", 1, all);
-		fsm.registerTransition("SendFusedMap", "AckPingMap", 2, all);
+		fsm.registerTransition("SendFusedMap", "Switch", 2, all);
 		fsm.registerTransition("ReceiveFusedMap", "ReceiveFusedMap", 0, all);
 		fsm.registerTransition("ReceiveFusedMap", "Planification", 1, all);
-		fsm.registerTransition("ReceiveFusedMap", "AckPingMap", 2, all);
+		fsm.registerTransition("ReceiveFusedMap", "Switch", 2, all);
 		
 		fsm.registerTransition("Planification", "Exploration", 0, all);
 		fsm.registerTransition("Planification", "Target", 1, all);
@@ -181,6 +186,18 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public void block() {
+		fsm.block();
+	}
+	
+	public void setToSend(MapRepresentation map) {
+		toSend = map;
+	}
+	
+	public MapRepresentation getToSend() {
+		return toSend;
 	}
 	
 	public int getBufferSizeBuffer() {
@@ -232,6 +249,12 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public MapRepresentation getMap() {
+		if(myMap == null) {
+			System.out.println(getLocalName()+" - INIT MAP");
+			myMap = new MapRepresentation();
+			myMap.show();
+			myMap.initPartial(getTeamates());
+		}
 		return myMap;
 	}
 	
@@ -427,22 +450,18 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	    return agents;
 	}
 	
-	public void ping(int type, String content) {
+	public void ping(int type, String content, AID receiver) {
 		ACLMessage ack = new ACLMessage(type);
 		ack.setSender(getAID());
-		for(String s : agents)
-			ack.addReceiver(new AID(s, AID.ISLOCALNAME));
+		ack.addReceiver(receiver);
 		ack.setContent(content);
 		sendMessage(ack);
-		setLastSend(ack);
+//		setLastSend(ack);
 		System.out.println(getLocalName()+" - PING");
 	}
 	
 	public void updateView() {
-		if(myMap == null) {
-			myMap = new MapRepresentation();
-			myMap.show();
-		}
+		getMap();
 		String myPosition = getCurrentPosition();
 		if(!closedNodes.contains(myPosition))
 			myMap.addNode(myPosition, MapAttribute.closed);
@@ -491,8 +510,8 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	}
 	
 	public String compressInfo(String agent) {
-		int nb = myMap.getBuffer(agent).getAllNodes().size();
-		return String.valueOf(nb)+","+getExploDone();
+		int nb = getMap().getBuffer(agent).getAllNodes().size();
+		return nb+","+exploDone;
 	}
 	
 	public void decompressInfo(String info) {
@@ -518,16 +537,30 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		String myPos = getCurrentPosition();
 		if(positionMemory.size() < 2)
 			return false;
-		//for(String pos : positionMemory) {
-			//if(!myPos.equals(pos))
-		//		return false;
-		//}
-		//return true;
 		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos)) {
 			System.out.println("Blocked because: " + positionMemory);
 			return true;
 		}
 		return false;
+	}
+	
+	public void randomTarget() {
+		String target = "";
+		Random r = new Random();
+		if(openNodes.size() > 1) {
+			target = openNodes.get(r.nextInt(openNodes.size()));
+		}else{
+			int cursor = r.nextInt(closedNodes.size());
+			int i = 0;
+			for(String s : closedNodes) {
+				if(i == cursor) {
+					target = s;
+					break;
+				}
+				i++;
+			}
+		}
+		setTarget(target);
 	}
 	
 	public void setLastOdor(String stenchPos) {

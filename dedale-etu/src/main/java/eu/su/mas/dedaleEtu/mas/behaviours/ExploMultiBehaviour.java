@@ -34,13 +34,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		
-		if(agent.getMap() == null) {
-			System.out.println(agent.getLocalName()+" - INIT MAP");
-			agent.setMap(new MapRepresentation());
-			agent.getMap().show();
-			agent.getMap().initPartial(agent.getTeamates());
-		}
 		MapRepresentation myMap = agent.getMap();
 		List<String> openNodes = agent.getOpenNodes();
 		Set<String> closedNodes = agent.getClosedNodes();
@@ -49,32 +42,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 		agent.updatePositionMemory(myPosition);
 		agent.printMemory();
-		
-
-		if(agent.isBlocked()) {
-			System.out.println(agent.getLocalName()+" - Target mode activated");
-			agent.changeState(ExploreMultiAgent.State.target);
-			String target = "";
-			Random r = new Random();
-			if(openNodes.size() > 1) {
-				target = openNodes.get(r.nextInt(openNodes.size()));
-			}else{
-				int cursor = r.nextInt(closedNodes.size());
-				int i = 0;
-				for(String s : closedNodes) {
-					if(i == cursor) {
-						target = s;
-						break;
-					}
-					i++;
-				}
-			}
-			agent.setTarget(target);
-			agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
-			System.out.println(agent.getLocalName()+" - target "+agent.getTarget());
-			System.out.println(agent.getLocalName()+" - transition to SWITCH");
-			return;
-		}
 		
 		if (myPosition!=null){
 			//List of observable from the agent's current position
@@ -179,6 +146,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 				nextNode = myPosition;
 			agent.setTarget(nextNode);
 			agent.move(nextNode);
+			if(agent.getLastMove())
+				agent.updateView();
 			if(transition == 1)
 				System.out.println(agent.getLocalName()+" - transition to SWITCH");
 			else
