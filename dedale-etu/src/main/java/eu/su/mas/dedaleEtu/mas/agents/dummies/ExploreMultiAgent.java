@@ -82,6 +82,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private boolean exploDoneBuffer;
 	
 	private MapRepresentation toSend;
+	private boolean inFormation=false;
 	
 	private FSMBehaviour fsm;
 	
@@ -186,6 +187,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean getInFormation() {
+		return inFormation;
+	}
+	
+	public void setInFormation(boolean b) {
+		inFormation = b;
 	}
 	
 	public void block() {
@@ -535,9 +544,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public boolean isBlocked() {
 		String myPos = getCurrentPosition();
-		if(positionMemory.size() < 2)
+		if(positionMemory.size() < 3)
 			return false;
-		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos)) {
+		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos) && positionMemory.get(positionMemory.size()-3).equals(myPos)) {
 			System.out.println("Blocked because: " + positionMemory);
 			return true;
 		}
@@ -547,7 +556,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void randomTarget() {
 		String target = "";
 		Random r = new Random();
-		if(openNodes.size() > 1) {
+		if(openNodes.size() > 2) {
 			target = openNodes.get(r.nextInt(openNodes.size()));
 		}else{
 			int cursor = r.nextInt(closedNodes.size());

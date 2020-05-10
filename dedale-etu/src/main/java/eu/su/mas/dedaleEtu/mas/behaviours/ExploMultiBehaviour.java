@@ -40,7 +40,6 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
-		agent.updatePositionMemory(myPosition);
 		agent.printMemory();
 		
 		if (myPosition!=null){

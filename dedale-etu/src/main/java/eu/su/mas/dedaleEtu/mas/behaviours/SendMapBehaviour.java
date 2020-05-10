@@ -37,6 +37,8 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
 		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
 		
+		agent.doWait();
+		
 		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 		ACLMessage checkDone = agent.receive(mt);
 		if(checkDone != null) {
@@ -48,23 +50,18 @@ public class SendMapBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to ReceiveFusedMAP");
 			else {
 				agent.changeState(State.target);
-				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
+				agent.setLockCoundown(5);
+				agent.randomTarget();
 				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 			return;
 		}
 		
-		boolean stop = true;
-		for(String s : agent.getBehaviourMemory())
-			if(!s.equals("SENDMAP"))
-				stop = false;
-		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
-			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
-			agent.setLastReceive(null);
-			agent.setLastSend(null);
-			agent.getBehaviourMemory().clear();
-			transition = 2;
-		}
+		System.out.println(agent.getLocalName()+" - Send Transmission error, return to SWITCH");
+		agent.setLastReceive(null);
+		agent.setLastSend(null);
+		agent.getBehaviourMemory().clear();
+		transition = 2;
 	}
 	
 	@Override

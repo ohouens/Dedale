@@ -25,6 +25,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
+		agent.updatePositionMemory(agent.getCurrentPosition());
 		switch(agent.getCurrentState()) {
 			case target:
 				transition = 1;
@@ -35,7 +36,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				if(agent.isBlocked()) {
+				if(agent.isBlocked() && !agent.getInFormation()) {
 					transition = 1;
 					System.out.println(agent.getLocalName()+" - Target mode activated");
 					agent.changeState(ExploreMultiAgent.State.target);

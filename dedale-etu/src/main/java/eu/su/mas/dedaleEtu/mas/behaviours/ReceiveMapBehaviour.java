@@ -48,19 +48,18 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to SendFusedMap");
 			else {
 				agent.changeState(State.target);
-				agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
+				agent.setLockCoundown(5);
+				agent.randomTarget();
 				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 			return;
 		}
 		
-		boolean stop = true;
-		for(String s : agent.getBehaviourMemory()) {
-			if(!s.equals("RECEIVEMAP"))
-				stop = false;
-		}
-		if(stop && agent.getBehaviourMemory().size() == ExploreMultiAgent.MEMORYSIZE) {
-			System.out.println(agent.getLocalName()+" - REEEEEEEEESEET");
+		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");
+		
+		int memSize = agent.getBehaviourMemory().size();
+		if(memSize >= 2 && agent.getBehaviourMemory().get(memSize-1).equals("RECEIVEMAP") && agent.getBehaviourMemory().get(memSize-2).equals("RECEIVEMAP")) {
+			System.out.println(agent.getLocalName()+" - Receive Transmission error, return to SWITCH");
 			agent.setLastReceive(null);
 			agent.setLastSend(null);
 			agent.getBehaviourMemory().clear();
@@ -68,7 +67,6 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			return;
 		}
 		
-		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");
 	}
 	
 	@Override
