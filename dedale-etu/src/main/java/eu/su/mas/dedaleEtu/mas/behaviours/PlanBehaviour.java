@@ -25,7 +25,6 @@ public class PlanBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
-		agent.updatePositionMemory(agent.getCurrentPosition());
 		switch(agent.getCurrentState()) {
 			case target:
 				transition = 1;
@@ -52,6 +51,9 @@ public class PlanBehaviour extends OneShotBehaviour{
 				}else {
 					if(agent.getRoute() == null)
 						agent.setRoute(makeRoute());
+					if(agent.getRdv() == null)
+						agent.setRdv(agent.getMap().getNodeMax());
+//					if(agent)
 					transition = 3;
 					System.out.println(agent.getLocalName()+" - transition to COALITION");
 					

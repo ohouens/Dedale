@@ -83,6 +83,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	private MapRepresentation toSend;
 	private boolean inFormation=false;
+	private String rdv="";
 	
 	private FSMBehaviour fsm;
 	
@@ -187,6 +188,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public String getRdv() {
+		return rdv;
+	}
+	
+	public void setRdv(String s) {
+		rdv = s;
 	}
 	
 	public boolean getInFormation() {
@@ -494,14 +503,16 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void move(String nextNode) {
 		try {
 			doWait(500);
-			System.in.read();
+//			System.in.read();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		if(nextNode != null) {
+			System.out.println(getLocalName()+" - current: "+getCurrentPosition()+", next: "+nextNode);
 			setLastMove(moveTo(nextNode));
 			System.out.println(getLocalName()+" - moveTo "+nextNode+" : "+getLastMove());
+			updatePositionMemory(getCurrentPosition());
 		}
 	}
 	
