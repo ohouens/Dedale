@@ -83,7 +83,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	private MapRepresentation toSend;
 	private boolean inFormation=false;
-	private String rdv="";
+	private String rdv;
 	
 	private FSMBehaviour fsm;
 	
@@ -198,7 +198,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		rdv = s;
 	}
 	
-	public boolean getInFormation() {
+	public boolean isInFormation() {
 		return inFormation;
 	}
 	
@@ -558,7 +558,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		if(positionMemory.size() < 3)
 			return false;
 		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos) && positionMemory.get(positionMemory.size()-3).equals(myPos)) {
-			System.out.println("Blocked because: " + positionMemory);
+			System.out.println(getLocalName()+" - Blocked because: " + positionMemory);
 			return true;
 		}
 		return false;

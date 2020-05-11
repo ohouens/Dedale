@@ -130,10 +130,8 @@ public class MapRepresentation implements Serializable {
 		n.setAttribute("ui.label",id);
 		nodes.add(id);
 		//adding closed node
-		if(mapAttribute == MapAttribute.closed && !this.closedNodes.contains(id)) {
+		if(mapAttribute == MapAttribute.closed)
 			this.closedNodes.add(id);
-//			System.out.println(id+"  CLOOOOOOOOOSEDD");
-		}
 	}
 
 	/**
@@ -314,6 +312,7 @@ public class MapRepresentation implements Serializable {
 			for (String key: graph.keySet()) {
 				if (graph.get(key).size()>degreMax) {
 					nodeMax = key;
+					degreMax = graph.get(key).size();
 				}
 				//if there are multiple nodes with the maximum degree, then we take the first (lexicography ordered)
 				else if (graph.get(key).size() == degreMax) {

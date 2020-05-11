@@ -35,7 +35,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				if(agent.isBlocked() && !agent.getInFormation()) {
+				if(agent.isBlocked() && !agent.isInFormation()) {
 					transition = 1;
 					System.out.println(agent.getLocalName()+" - Target mode activated");
 					agent.changeState(ExploreMultiAgent.State.target);
@@ -53,10 +53,15 @@ public class PlanBehaviour extends OneShotBehaviour{
 						agent.setRoute(makeRoute());
 					if(agent.getRdv() == null)
 						agent.setRdv(agent.getMap().getNodeMax());
-//					if(agent)
-					transition = 3;
-					System.out.println(agent.getLocalName()+" - transition to COALITION");
-					
+					if(agent.isInFormation()) {
+						transition = 3;
+						System.out.println(agent.getLocalName()+" - transition to COALITION");
+						return;
+					}
+					agent.setLockCoundown(1);
+					agent.setTarget(agent.getRdv());
+					transition = 1;
+					System.out.println(agent.getLocalName()+" - heading to RDV, transition to TARGET");
 				}
 				break;
 		}

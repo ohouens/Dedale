@@ -27,6 +27,8 @@ public class TargetBehaviour extends OneShotBehaviour{
 		String position = agent.getCurrentPosition();
 		agent.updateView();
 		
+		System.out.println(agent.getLocalName()+" - target: "+agent.getTarget()+", lockdown: "+agent.getLockCountdown());
+		
 		if(agent.getLockCountdown() <= 0) {
 			System.out.println(agent.getLocalName()+" - Target not reach");
 			agent.changeState(ExploreMultiAgent.State.explo);
@@ -45,15 +47,13 @@ public class TargetBehaviour extends OneShotBehaviour{
 		List<String> openNodes = agent.getOpenNodes();
 		List<String> sp = agent.getMap().getShortestPath(position, agent.getTarget());
 		nextNode = sp.get(0);
-
-		System.out.println(agent.getLocalName()+" - nextNode "+nextNode);
 		
 		agent.move(nextNode);
+		agent.updateLC();
 		if(transition == 1)
 			System.out.println(agent.getLocalName()+" - transition to SWITCH");
 		else
 			System.out.println(agent.getLocalName()+" - Stay in TARGET");
-		agent.updateLC();
 	}
 
 	public int onEnd() {

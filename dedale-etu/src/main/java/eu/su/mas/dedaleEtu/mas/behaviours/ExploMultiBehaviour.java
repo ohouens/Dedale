@@ -78,7 +78,7 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 				//Explo finished
 				agent.setExploDone(true);
 				System.out.println(agent.getLocalName()+" - Exploration successufully done, behaviour removed.");
-				System.out.println("NODE WITH MAX DEGREE: " + agent.getMap().getNodeMax());
+				System.out.println(agent.getLocalName()+" - NODE WITH MAX DEGREE: " + agent.getMap().getNodeMax());
 				return;
 			}
 			
