@@ -85,6 +85,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private boolean inFormation=false;
 	private String rdv;
 	
+	private String placeBuffer;
+	private ArrayList<String> golemBuffer = new ArrayList<>();
+	
 	private FSMBehaviour fsm;
 	
 	public void setup() {
@@ -224,6 +227,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public boolean getExploDoneBuffer() {
 		return exploDoneBuffer;
+	}
+	
+	public String getPlaceBuffer() {
+		return placeBuffer;
+	}
+	
+	public ArrayList<String> getGolemBuffer() {
+		return golemBuffer;
 	}
 	
 	public boolean getTunnelFlag() {
@@ -475,7 +486,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		ack.setContent(content);
 		sendMessage(ack);
 //		setLastSend(ack);
-		System.out.println(getLocalName()+" - PING");
+		System.out.println(getLocalName()+" - PING: "+content);
 	}
 	
 	public void updateView() {
@@ -538,6 +549,20 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		String[] compress = info.split(",");
 		bufferSizeBuffer = Integer.valueOf(compress[0]);
 		exploDoneBuffer = Boolean.valueOf(compress[1]);
+	}
+	
+	public String compressCoalition(String golem) {
+		return getCurrentPosition()+","+golem;
+	}
+	
+	public void decompressCoalition(String coalition) {
+		String[] compress = coalition.split(",");
+		placeBuffer = compress[0];
+		String interGolem = compress[1];
+		if(!interGolem.equals("_")) {
+			for(String s : interGolem.split(":"))
+				golemBuffer.add(s);
+		}
 	}
 	
 

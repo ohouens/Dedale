@@ -57,7 +57,7 @@ public final class ConfigurationFile {
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */ 
-//	public static String INSTANCE_TOPOLOGY=null;
+	public static String INSTANCE_TOPOLOGY=null;
 //	public static String INSTANCE_TOPOLOGY = "resources/topology/BinaryTree1";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/map2018-topology-ica";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/HouatTopology";
@@ -70,7 +70,7 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/intersectionBisTestTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/circleTestTopology";
-	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/trainingMapTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapMiniTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/marchMadnessTopology";
@@ -79,8 +79,8 @@ public final class ConfigurationFile {
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */
-//	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
-	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap";
+	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
+//	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/treasureHunt/map2018-elements-ica";
 //	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/interlocking/mapInterlocking2-elements";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/Houat-elements";
@@ -101,7 +101,7 @@ public final class ConfigurationFile {
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2019-entitiesExam1";
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/monoAgent-entities";
 	//public static String INSTANCE_CONFIGURATION_ENTITIES="resources/mapInterlocking2-entities";
-	//public static String INSTANCE_CONFIGURATION_ENTITIES=null;
+//	public static String INSTANCE_CONFIGURATION_ENTITIES=null;
 	
 	/************************************
 	 * 

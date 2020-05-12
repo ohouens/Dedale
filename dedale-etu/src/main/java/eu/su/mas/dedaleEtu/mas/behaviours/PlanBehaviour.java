@@ -12,6 +12,8 @@ import java.util.Set;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class PlanBehaviour extends OneShotBehaviour{
 
@@ -36,6 +38,15 @@ public class PlanBehaviour extends OneShotBehaviour{
 				break;
 			default:
 				if(agent.isBlocked() && !agent.isInFormation()) {
+					MessageTemplate mt = MessageTemplate.MatchPerformative(777777);
+					ACLMessage msgCoa = myAgent.receive(mt);
+					if(msgCoa != null) {
+						agent.setInFormation(true);
+						System.out.println(agent.getLocalName()+" - Enter in coalition");
+						transition = 3;
+						agent.setLockCoundown(20);
+						return;
+					}
 					transition = 1;
 					System.out.println(agent.getLocalName()+" - Target mode activated");
 					agent.changeState(ExploreMultiAgent.State.target);
@@ -57,6 +68,13 @@ public class PlanBehaviour extends OneShotBehaviour{
 						transition = 3;
 						System.out.println(agent.getLocalName()+" - transition to COALITION");
 						return;
+					}
+					if(agent.getCurrentPosition().equals(agent.getRdv())) {
+						agent.setInFormation(true);
+						System.out.println(agent.getLocalName()+" - RDV reached, begin formation");
+						System.out.println(agent.getLocalName()+" - Enter in coalition");
+						transition = 3;
+						agent.setLockCoundown(20);
 					}
 					agent.setLockCoundown(1);
 					agent.setTarget(agent.getRdv());
