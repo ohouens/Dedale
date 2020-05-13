@@ -38,7 +38,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 				break;
 			default:
 				if(agent.isBlocked() && !agent.isInFormation()) {
-					MessageTemplate mt = MessageTemplate.MatchPerformative(777777);
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF);
 					ACLMessage msgCoa = myAgent.receive(mt);
 					if(msgCoa != null) {
 						agent.setInFormation(true);
@@ -64,22 +64,23 @@ public class PlanBehaviour extends OneShotBehaviour{
 						agent.setRoute(makeRoute());
 					if(agent.getRdv() == null)
 						agent.setRdv(agent.getMap().getNodeMax());
-					if(agent.isInFormation()) {
-						transition = 3;
-						System.out.println(agent.getLocalName()+" - transition to COALITION");
-						return;
-					}
-					if(agent.getCurrentPosition().equals(agent.getRdv())) {
-						agent.setInFormation(true);
-						System.out.println(agent.getLocalName()+" - RDV reached, begin formation");
-						System.out.println(agent.getLocalName()+" - Enter in coalition");
-						transition = 3;
-						agent.setLockCoundown(20);
-					}
-					agent.setLockCoundown(1);
-					agent.setTarget(agent.getRdv());
-					transition = 1;
-					System.out.println(agent.getLocalName()+" - heading to RDV, transition to TARGET");
+//					if(agent.isInFormation()) {
+//						transition = 3;
+//						System.out.println(agent.getLocalName()+" - transition to COALITION");
+//						return;
+//					}
+//					if(agent.getCurrentPosition().equals(agent.getRdv())) {
+//						agent.setInFormation(true);
+//						System.out.println(agent.getLocalName()+" - RDV reached, begin formation");
+//						System.out.println(agent.getLocalName()+" - Enter in coalition");
+//						transition = 3;
+//						agent.setLockCoundown(20);
+//					}
+//					agent.setLockCoundown(1);
+//					agent.setTarget(agent.getRdv());
+//					transition = 1;
+//					System.out.println(agent.getLocalName()+" - heading to RDV, transition to TARGET");
+					transition = 3;
 				}
 				break;
 		}

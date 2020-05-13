@@ -6,6 +6,7 @@ import java.util.List;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent.State;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
@@ -26,6 +27,7 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
 		String golem = "_";
+		String hunt = null;
 		int y = 0;
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=agent.observe().iterator();
 		while(iter.hasNext()){
@@ -39,6 +41,8 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 					System.out.println(agent.getLocalName()+" - I can smell the golem from here!");
 					String stenchPos = couple.getLeft();
 					System.out.println(agent.getLocalName()+" - Odor position: " + stenchPos);
+					if(hunt == null)
+						hunt = stenchPos;
 					if(y==0)
 						golem = stenchPos;
 					else
@@ -52,12 +56,16 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 			System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
 			System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
 			System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
+			if(hunt!=null) {
+				agent.changeState(State.hunt);
+				System.out.println(agent.getLocalName()+" - transition to HUNTING");
+			}
 			agent.move(agent.getRouteWay());
 			System.out.println(agent.getLocalName()+" - transition to SWITCH");
 		}else {
 			boolean hasMove = false;
 			String myPos = agent.getCurrentPosition();
-			MessageTemplate mt = MessageTemplate.MatchPerformative(777777);
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF);
 			ACLMessage msgCoa = myAgent.receive(mt);
 			agent.getGolemBuffer().clear();
 			if(msgCoa != null)
@@ -71,6 +79,11 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 					}
 				}
 			}
+			if(!hasMove && hunt != null) {
+				agent.move(hunt);
+				if(agent.getLastMove())
+					hasMove = true;
+			}
 			if(!hasMove && agent.getPlaceBuffer() != null) {
 				for(String p : agent.getMap().getEdges(agent.getPlaceBuffer())) {
 					if(agent.getMap().getEdges(myPos).contains(p)) {
@@ -83,10 +96,9 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 				}
 			}
 			for(String team : agent.getTeamates())
-				agent.ping(777777, agent.compressCoalition(golem), new AID(team, AID.ISLOCALNAME));
+				agent.ping(ACLMessage.INFORM_REF, agent.compressCoalition(golem), new AID(team, AID.ISLOCALNAME));
 			if(golem.equals("_") && !hasMove)
 				agent.updateLC();
-			
 			if(agent.getLockCountdown() <= 0) {
 				System.out.println(agent.getLocalName()+" - Exit in Coalition");
 				agent.setInFormation(false);

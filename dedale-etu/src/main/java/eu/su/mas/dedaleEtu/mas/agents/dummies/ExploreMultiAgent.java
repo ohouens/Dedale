@@ -514,6 +514,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void move(String nextNode) {
 		try {
 			doWait(500);
+//			if(exploDone)
 //			System.in.read();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -521,6 +522,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		
 		if(nextNode != null) {
 			System.out.println(getLocalName()+" - current: "+getCurrentPosition()+", next: "+nextNode);
+			if(!nextNode.equals(getCurrentPosition()))
 			setLastMove(moveTo(nextNode));
 			System.out.println(getLocalName()+" - moveTo "+nextNode+" : "+getLastMove());
 			updatePositionMemory(getCurrentPosition());
