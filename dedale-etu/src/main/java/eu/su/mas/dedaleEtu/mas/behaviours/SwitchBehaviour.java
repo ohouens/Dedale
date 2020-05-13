@@ -46,7 +46,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 			return;
 		}
 		
-		if(agent.toExplo())
+		if(agent.toExplo() || agent.isDone())
 			System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 		else {
 			transition = 4;

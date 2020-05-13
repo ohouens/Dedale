@@ -80,6 +80,30 @@ public class PlanBehaviour extends OneShotBehaviour{
 //					agent.setTarget(agent.getRdv());
 //					transition = 1;
 //					System.out.println(agent.getLocalName()+" - heading to RDV, transition to TARGET");
+					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROXY);
+					ACLMessage msgHunt = myAgent.receive(mt);
+					if(msgHunt != null) {
+						String[] asking = msgHunt.getContent().split(":");
+						String nature = asking[0];
+						String target = asking[1];
+						if(nature.equals("HELP")) {
+							System.out.println(agent.getLocalName()+" - answer HELP in "+target);
+							List<String> way = agent.getMap().getShortestPath(agent.getCurrentPosition(), target);
+							if(way.size()>=1) {
+								String nextMove = way.get(0);
+								agent.move(nextMove);
+							}
+							transition = 2;
+							return;
+						}
+						if(nature.equals("DEAD")) {
+							System.out.println(agent.getLocalName()+" - Teamate have already DEAD this, need to move elsewhere");
+							agent.randomTarget();
+							agent.setLockCoundown(3);
+							transition = 1;
+							return;
+						}
+					}
 					transition = 3;
 				}
 				break;

@@ -72,6 +72,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private Pair lastOdor; 
 	private List<String> golemZones = new ArrayList<String>(); //list of positions where more than one golem was smelled at once
 	
+
+	private HashMap<String, Boolean> shareDone = new HashMap<>();
+	private boolean done=false;
 	
 	private String target;
 	private List<String> tunnel = new ArrayList<>();
@@ -191,6 +194,26 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public boolean isDoneWith(String s) {
+		return shareDone.get(s);
+	}
+	
+	public void setDoneWith(String s) {
+		shareDone.put(s, true);
+	}
+	
+	public boolean shareDone() {
+		return !shareDone.containsValue(false);
+	}
+	
+	public void done() {
+		done=true;
+	}
+	
+	public boolean isDone() {
+		return done;
 	}
 	
 	public String getRdv() {
@@ -469,6 +492,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		    		if(!result[i].getName().getLocalName().equals(getLocalName())) {
 		    			String name = result[i].getName().getLocalName();
 			    		agents.add(name);
+			    		shareDone.put(name, false);
 //			    		System.out.println(this.getLocalName()+" FOUND AGENT "+result[i].getName().getLocalName());
 		    		}
 		    	}
@@ -530,6 +554,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		}
 		
 		if(nextNode != null) {
+//			System.out.println(getLocalName()+" - share: "+shareDone+", done: "+done);
 			System.out.println(getLocalName()+" - current: "+getCurrentPosition()+", next: "+nextNode);
 			if(!nextNode.equals(getCurrentPosition()))
 			setLastMove(moveTo(nextNode));

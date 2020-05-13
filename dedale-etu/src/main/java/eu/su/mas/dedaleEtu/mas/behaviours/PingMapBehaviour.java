@@ -26,6 +26,8 @@ public class PingMapBehaviour extends OneShotBehaviour{
 		List<String>agents = agent.getTeamates();
 		
 		for(String s : agents) {
+			if(agent.isDoneWith(s))
+				continue;
 			ACLMessage ping = new ACLMessage(ACLMessage.REQUEST);
 			ping.setSender(myAgent.getAID());
 			ping.addReceiver(new AID(s, AID.ISLOCALNAME));

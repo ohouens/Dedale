@@ -28,6 +28,11 @@ public class SynchronizationBehaviour extends OneShotBehaviour{
 			String s1 = agent.getLocalName();
 			String s2 = HPing.getSender().getLocalName();
 			if(agent.getExploDoneBuffer() && agent.getExploDone() || (agent.getBufferSizeBuffer()==0 && agent.getMap().getBuffer(s2).getAllNodes().size()==0)) {
+				if(agent.getExploDoneBuffer() && agent.getExploDone()) {
+					agent.setDoneWith(s2);
+					if(agent.shareDone())
+						agent.done();
+				}
 				transition = 2;
 				System.out.println(agent.getLocalName()+" - Transition to Switch");
 				return;

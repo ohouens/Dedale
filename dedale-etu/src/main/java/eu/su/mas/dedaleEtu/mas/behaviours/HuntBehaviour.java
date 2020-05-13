@@ -32,8 +32,7 @@ public class HuntBehaviour extends OneShotBehaviour{
 			}
 		}
 		
-		boolean first = true;
-		String firstOdor = null;
+		String preOdor = null;
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=agent.observe();//myPosition
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
 		String nextNode = null;
@@ -46,11 +45,8 @@ public class HuntBehaviour extends OneShotBehaviour{
 //					System.out.println("I can smell the golem from here!");
 					String stenchPos = StrList.getLeft();
 //					System.out.println("Odor position: " + stenchPos);
+					preOdor = nextNode;
 					nextNode = stenchPos;
-					if(first) {
-						firstOdor = stenchPos;
-						first = false;
-					}
 					// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
 					// càd on doit verifier que la case où on veut aller est occupée
 				}
@@ -64,8 +60,8 @@ public class HuntBehaviour extends OneShotBehaviour{
 			return;
 		}
 		
-		if(firstOdor != null)
-			agent.ping(ACLMessage.PROXY, "HELP:"+firstOdor, agent.getTeamates());
+		if(preOdor != null)
+			agent.ping(ACLMessage.PROXY, "HELP:"+preOdor, agent.getTeamates());
 		
 		if(nextNode == null) {
 			transition = 1;

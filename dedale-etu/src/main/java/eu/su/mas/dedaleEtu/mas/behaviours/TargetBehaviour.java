@@ -50,10 +50,8 @@ public class TargetBehaviour extends OneShotBehaviour{
 		
 		agent.move(nextNode);
 		agent.updateLC();
-		if(transition == 1)
-			System.out.println(agent.getLocalName()+" - transition to SWITCH");
-		else
-			System.out.println(agent.getLocalName()+" - Stay in TARGET");
+		agent.initCoalition();
+		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 
 	public int onEnd() {
