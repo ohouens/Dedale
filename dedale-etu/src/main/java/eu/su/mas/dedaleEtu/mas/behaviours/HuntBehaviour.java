@@ -7,7 +7,9 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
 
 public class HuntBehaviour extends OneShotBehaviour{
 	private int transition;
@@ -19,27 +21,51 @@ public class HuntBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
-		agent.updateView();
+		if(!agent.getExploDone())
+			agent.updateView();
+		
+		boolean isBlocked=true;
+		for(String pos : agent.getPositionMemory()) {
+			if(!pos.equals(agent.getCurrentPosition())) {
+				isBlocked=false;
+				break;
+			}
+		}
+		
+		boolean first = true;
+		String firstOdor = null;
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=agent.observe();//myPosition
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter2 = lobs.iterator();
 		String nextNode = null;
-		transition = 0;
-		
 		while (iter2.hasNext()) {
 			Couple <String, List<Couple<Observation, Integer>>> StrList = iter2.next();
 			List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
 			System.out.println("OBSERVATIONS: " + listObsInt);
 			for (int i = 0; i < listObsInt.size(); i++) {
 				if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-					System.out.println("I can smell the golem from here!");
+//					System.out.println("I can smell the golem from here!");
 					String stenchPos = StrList.getLeft();
-					System.out.println("Odor position: " + stenchPos);
+//					System.out.println("Odor position: " + stenchPos);
 					nextNode = stenchPos;
+					if(first) {
+						firstOdor = stenchPos;
+						first = false;
+					}
 					// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
 					// càd on doit verifier que la case où on veut aller est occupée
 				}
 			}
 		}
+		
+		if(isBlocked && nextNode!=null) {
+			agent.ping(ACLMessage.PROXY, "DEAD:"+nextNode, agent.getTeamates());
+			System.out.println(agent.getLocalName()+" - HUNTING done");
+			transition = 0;
+			return;
+		}
+		
+		if(firstOdor != null)
+			agent.ping(ACLMessage.PROXY, "HELP:"+firstOdor, agent.getTeamates());
 		
 		if(nextNode == null) {
 			transition = 1;
@@ -53,12 +79,10 @@ public class HuntBehaviour extends OneShotBehaviour{
 		//list of observations associated to the currentPosition
 		System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
 		
-		/************************************************
-		 * 				END API CALL ILUSTRATION
-		 *************************************************/
+		
 		agent.move(nextNode);
 		System.out.println(agent.getLocalName()+" - continue HUNTING");
-	
+		transition = 0;
 	}
 
 	public int onEnd() {

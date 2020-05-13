@@ -95,8 +95,7 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 					}
 				}
 			}
-			for(String team : agent.getTeamates())
-				agent.ping(ACLMessage.INFORM_REF, agent.compressCoalition(golem), new AID(team, AID.ISLOCALNAME));
+			agent.ping(ACLMessage.INFORM_REF, agent.compressCoalition(golem), agent.getTeamates());
 			if(golem.equals("_") && !hasMove)
 				agent.updateLC();
 			if(agent.getLockCountdown() <= 0) {

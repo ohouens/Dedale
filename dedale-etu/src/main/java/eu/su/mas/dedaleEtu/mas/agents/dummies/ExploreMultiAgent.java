@@ -485,7 +485,16 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		ack.addReceiver(receiver);
 		ack.setContent(content);
 		sendMessage(ack);
-//		setLastSend(ack);
+		System.out.println(getLocalName()+" - PING: "+content);
+	}
+	
+	public void ping(int type, String content, List<String> receivers) {
+		ACLMessage ack = new ACLMessage(type);
+		ack.setSender(getAID());
+		for(String teamate : receivers)
+			ack.addReceiver(new AID(teamate,AID.ISLOCALNAME));
+		ack.setContent(content);
+		sendMessage(ack);
 		System.out.println(getLocalName()+" - PING: "+content);
 	}
 	
