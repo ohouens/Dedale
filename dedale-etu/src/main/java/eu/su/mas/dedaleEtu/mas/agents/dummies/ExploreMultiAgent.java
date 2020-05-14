@@ -546,7 +546,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public void move(String nextNode) {
 		try {
-			doWait(500);
+			doWait(1000);
 //			if(exploDone)
 //			System.in.read();
 		} catch (Exception e) {

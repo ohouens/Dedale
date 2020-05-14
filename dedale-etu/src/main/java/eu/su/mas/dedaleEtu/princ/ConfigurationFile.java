@@ -57,7 +57,7 @@ public final class ConfigurationFile {
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */ 
-	public static String INSTANCE_TOPOLOGY=null;
+//	public static String INSTANCE_TOPOLOGY=null;
 //	public static String INSTANCE_TOPOLOGY = "resources/topology/BinaryTree1";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/map2018-topology-ica";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/HouatTopology";
@@ -74,13 +74,16 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapMiniTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/marchMadnessTopology";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-graph";
+	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-tree";
 	
 	
 	/**
 	 * Not null when the environment is loaded; should be null if the environment is generated or already online
 	 */
-	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
+//	public static String INSTANCE_CONFIGURATION_ELEMENTS=null;
 //	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap";
+	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/distributedExploration/emptyMap.txt";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/treasureHunt/map2018-elements-ica";
 //	public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/interlocking/mapInterlocking2-elements";
 	//public static String INSTANCE_CONFIGURATION_ELEMENTS="resources/Houat-elements";
@@ -92,7 +95,9 @@ public final class ConfigurationFile {
 	/**
 	 * Must'nt be null as it describes the agents capabilities on the map
 	 */
-	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/battleRoyal";
+//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/battleRoyal";
+	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesTree";
+//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesGraph";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/treasureHunt/anyMap-hunt-1golem1agent-entities";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo-2";

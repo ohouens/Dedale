@@ -64,22 +64,6 @@ public class PlanBehaviour extends OneShotBehaviour{
 						agent.setRoute(makeRoute());
 					if(agent.getRdv() == null)
 						agent.setRdv(agent.getMap().getNodeMax());
-//					if(agent.isInFormation()) {
-//						transition = 3;
-//						System.out.println(agent.getLocalName()+" - transition to COALITION");
-//						return;
-//					}
-//					if(agent.getCurrentPosition().equals(agent.getRdv())) {
-//						agent.setInFormation(true);
-//						System.out.println(agent.getLocalName()+" - RDV reached, begin formation");
-//						System.out.println(agent.getLocalName()+" - Enter in coalition");
-//						transition = 3;
-//						agent.setLockCoundown(20);
-//					}
-//					agent.setLockCoundown(1);
-//					agent.setTarget(agent.getRdv());
-//					transition = 1;
-//					System.out.println(agent.getLocalName()+" - heading to RDV, transition to TARGET");
 					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROXY);
 					ACLMessage msgHunt = myAgent.receive(mt);
 					if(msgHunt != null) {
@@ -96,13 +80,13 @@ public class PlanBehaviour extends OneShotBehaviour{
 							transition = 2;
 							return;
 						}
-						if(nature.equals("DEAD")) {
-							System.out.println(agent.getLocalName()+" - Teamate have already DEAD this, need to move elsewhere");
-							agent.randomTarget();
-							agent.setLockCoundown(3);
-							transition = 1;
-							return;
-						}
+//						if(nature.equals("DEAD")) {
+//							System.out.println(agent.getLocalName()+" - Teamate have already DEAD this, need to move elsewhere");
+//							agent.randomTarget();
+//							agent.setLockCoundown(3);
+//							transition = 1;
+//							return;
+//						}
 					}
 					transition = 3;
 				}

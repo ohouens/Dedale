@@ -11,6 +11,7 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent.State;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.behaviours.OneShotBehaviour;
@@ -46,6 +47,27 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//List of observable from the agent's current position
 			List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 
+			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter0 = lobs.iterator();
+			//0)chek if golem odor
+			while (iter0.hasNext()) {
+				Couple <String, List<Couple<Observation, Integer>>> StrList = iter0.next();
+				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
+				//System.out.println("OBSERVATIONS: " + listObsInt);
+				for (int i = 0; i < listObsInt.size(); i++) {
+					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+						System.out.println("I can smell the golem from here!");
+						String stenchPos = StrList.getLeft();
+						System.out.println("Odor position: " + stenchPos);
+						agent.setLastOdor(stenchPos);
+						agent.changeState(State.hunt);
+						transition=1;
+						System.out.println(agent.getLocalName()+" - HUNT mode activated");
+						System.out.println(agent.getLocalName()+" - transition to SWITCH");
+						return;
+					}
+				}
+			}
+			
 			//1) remove the current node from openlist and add it to closedNodes.
 			closedNodes.add(myPosition);
 			openNodes.remove(myPosition);

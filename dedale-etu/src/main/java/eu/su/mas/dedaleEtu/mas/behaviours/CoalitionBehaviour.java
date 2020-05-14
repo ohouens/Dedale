@@ -52,61 +52,15 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 			}
 		}
 		
-		if(!agent.isInFormation()) {
-			System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
-			System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
-			System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
-			if(hunt!=null) {
-				agent.changeState(State.hunt);
-				System.out.println(agent.getLocalName()+" - transition to HUNTING");
-			}
-			agent.move(agent.getRouteWay());
-			System.out.println(agent.getLocalName()+" - transition to SWITCH");
-		}else {
-			boolean hasMove = false;
-			String myPos = agent.getCurrentPosition();
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF);
-			ACLMessage msgCoa = myAgent.receive(mt);
-			agent.getGolemBuffer().clear();
-			if(msgCoa != null)
-				agent.decompressCoalition(msgCoa.getContent());
-			for(String g : agent.getGolemBuffer()) {
-				if(agent.getMap().getEdges(myPos).contains(g)) {
-					agent.move(g);
-					if(agent.getLastMove()) {
-						hasMove = true;
-						break;
-					}
-				}
-			}
-			if(!hasMove && hunt != null) {
-				agent.move(hunt);
-				if(agent.getLastMove())
-					hasMove = true;
-			}
-			if(!hasMove && agent.getPlaceBuffer() != null) {
-				for(String p : agent.getMap().getEdges(agent.getPlaceBuffer())) {
-					if(agent.getMap().getEdges(myPos).contains(p)) {
-						agent.move(p);
-						if(agent.getLastMove()) {
-							hasMove = true;
-							break;
-						}
-					}
-				}
-			}
-			agent.ping(ACLMessage.INFORM_REF, agent.compressCoalition(golem), agent.getTeamates());
-			if(golem.equals("_") && !hasMove)
-				agent.updateLC();
-			if(agent.getLockCountdown() <= 0) {
-				System.out.println(agent.getLocalName()+" - Exit in Coalition");
-				agent.setInFormation(false);
-				transition = 1;
-			}else {
-				System.out.println(agent.getLocalName()+" - Stay in Coalition");
-				transition = 0;
-			}
+		System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
+		System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
+		System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
+		if(hunt!=null) {
+			agent.changeState(State.hunt);
+			System.out.println(agent.getLocalName()+" - transition to HUNTING");
 		}
+		agent.move(agent.getRouteWay());
+		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 	
 	@Override

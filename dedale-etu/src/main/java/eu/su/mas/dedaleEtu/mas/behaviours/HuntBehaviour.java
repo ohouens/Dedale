@@ -61,7 +61,7 @@ public class HuntBehaviour extends OneShotBehaviour{
 		}
 		
 		if(preOdor != null)
-			agent.ping(ACLMessage.PROXY, "HELP:"+preOdor, agent.getTeamates());
+			agent.ping(ACLMessage.PROXY, "HELP:"+nextNode, agent.getTeamates());
 		
 		if(nextNode == null) {
 			transition = 1;
