@@ -33,33 +33,33 @@ public class ReceiveMapBehaviour extends OneShotBehaviour{
 			transition = 1;
 			myMap = agent.getMap();
 			String inter;
-			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
+//			System.out.println(myAgent.getLocalName()+" RECEIVE MAP FROM "+msgMap.getSender().getLocalName());
 			inter = msgMap.getContent();
 			myMap.merge(inter, agent.getClosedNodes(), agent.getOpenNodes());
-			if(original)
-				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
+//			if(original)
+//				System.out.println(myAgent.getLocalName()+" - MAP MERGED !!!");
 			ACLMessage ackMap = new ACLMessage(ACLMessage.CONFIRM);
 			ackMap.setSender(agent.getAID());
 			ackMap.addReceiver(msgMap.getSender());
 			ackMap.setContent("ackMap");
 			agent.sendMessage(ackMap);
-			System.out.println(agent.getLocalName()+" - AckMap");
-			if(original)
-				System.out.println(agent.getLocalName()+" - transition to SendFusedMap");
-			else {
+//			System.out.println(agent.getLocalName()+" - AckMap");
+			if(original) {
+//				System.out.println(agent.getLocalName()+" - transition to SendFusedMap");
+			}else{
 				agent.changeState(State.target);
 				agent.setLockCoundown(5);
 				agent.randomTarget();
-				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
+//				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 			return;
 		}
 		
-		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");
+//		System.out.println(myAgent.getLocalName()+" - MAP NOT RECEIVED");
 		
 		int memSize = agent.getBehaviourMemory().size();
 		if(memSize >= 2 && agent.getBehaviourMemory().get(memSize-1).equals("RECEIVEMAP") && agent.getBehaviourMemory().get(memSize-2).equals("RECEIVEMAP")) {
-			System.out.println(agent.getLocalName()+" - Receive Transmission error, return to SWITCH");
+//			System.out.println(agent.getLocalName()+" - Receive Transmission error, return to SWITCH");
 			agent.setLastReceive(null);
 			agent.setLastSend(null);
 			agent.getBehaviourMemory().clear();

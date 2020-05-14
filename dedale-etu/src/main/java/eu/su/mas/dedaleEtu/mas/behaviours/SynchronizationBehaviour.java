@@ -34,29 +34,29 @@ public class SynchronizationBehaviour extends OneShotBehaviour{
 						agent.done();
 				}
 				transition = 2;
-				System.out.println(agent.getLocalName()+" - Transition to Switch");
+//				System.out.println(agent.getLocalName()+" - Transition to Switch");
 				return;
 			}
 			agent.setToSend(agent.getMap().getBuffer(s2));
-			System.out.println(agent.getLocalName()+" - BUFF SIZE OTHER:"+agent.getBufferSizeBuffer()+" < BUFF SIZE I:"+agent.getMap().getBuffer(s2).getAllNodes().size());
+//			System.out.println(agent.getLocalName()+" - BUFF SIZE OTHER:"+agent.getBufferSizeBuffer()+" < BUFF SIZE I:"+agent.getMap().getBuffer(s2).getAllNodes().size());
 			if(agent.getBufferSizeBuffer() == agent.getMap().getBuffer(s2).getAllNodes().size()) {
 				if(s1.charAt(s1.length()-1) < s1.charAt(s2.length()-1)) {
 					transition = 1;
-					System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
+//					System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
 					return;
 				}
 			}
 			if(agent.getBufferSizeBuffer() < agent.getMap().getBuffer(s2).getAllNodes().size()) {
 				transition = 1;
-				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
+//				System.out.println(agent.getLocalName()+" - Transition to SendOriginalMAP");
 				return;
 			}
 			transition = 0;
-			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
+//			System.out.println(agent.getLocalName()+" - Transition to ReceiveOriginalMAP");
 			return;
 		}
 		transition = 2;
-		System.out.println(agent.getLocalName()+" - Transition to Switch");		
+//		System.out.println(agent.getLocalName()+" - Transition to Switch");		
 	}
 	
 	@Override

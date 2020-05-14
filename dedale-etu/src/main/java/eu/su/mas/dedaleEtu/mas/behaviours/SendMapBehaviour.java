@@ -35,7 +35,7 @@ public class SendMapBehaviour extends OneShotBehaviour{
 //		sendMap.setContent(myMap.serialize());
 		sendMap.setContent(agent.getToSend().serialize());
 		((AbstractDedaleAgent) myAgent).sendMessage(sendMap);
-		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
+//		System.out.println(myAgent.getLocalName()+" - SEND MAP !!!!!");
 		
 		agent.doWait();
 		
@@ -44,20 +44,20 @@ public class SendMapBehaviour extends OneShotBehaviour{
 		if(checkDone != null) {
 			String name = checkDone.getSender().getLocalName();
 			myMap.resetBuffer(name);
-			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
+//			System.out.println(myAgent.getLocalName()+" - "+name+" MAP BUFFER RESET !!!");
 			transition = 1;
-			if(original)
-				System.out.println(agent.getLocalName()+" - transition to ReceiveFusedMAP");
-			else {
+			if(original) {
+//				System.out.println(agent.getLocalName()+" - transition to ReceiveFusedMAP");
+			}else {
 				agent.changeState(State.target);
 				agent.setLockCoundown(5);
 				agent.randomTarget();
-				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
+//				System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
 			}
 			return;
 		}
 		
-		System.out.println(agent.getLocalName()+" - Send Transmission error, return to SWITCH");
+//		System.out.println(agent.getLocalName()+" - Send Transmission error, return to SWITCH");
 		agent.setLastReceive(null);
 		agent.setLastSend(null);
 		agent.getBehaviourMemory().clear();

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent.State;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -30,64 +31,41 @@ public class PlanBehaviour extends OneShotBehaviour{
 		switch(agent.getCurrentState()) {
 			case target:
 				transition = 1;
-				System.out.println(agent.getLocalName()+" - transition to TARGET");
+				if(agent.isBlocked()) {
+					transition = 1;
+//					System.out.println(agent.getLocalName()+" - Target mode activated");
+				}
+//				System.out.println(agent.getLocalName()+" - transition to TARGET");
 				break;
 			case hunt:
 				transition = 2;
-				System.out.println(agent.getLocalName()+" - transition to HUNTING");
+//				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				if(agent.isBlocked() && !agent.isInFormation()) {
-					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF);
-					ACLMessage msgCoa = myAgent.receive(mt);
-					if(msgCoa != null) {
-						agent.setInFormation(true);
-						System.out.println(agent.getLocalName()+" - Enter in coalition");
-						transition = 3;
-						agent.setLockCoundown(20);
+				if(agent.isBlocked()) {
+					agent.ping(ACLMessage.NOT_UNDERSTOOD, agent.getLastTry(), agent.getTeamates());
+					
+					MessageTemplate interlock = MessageTemplate.MatchPerformative(ACLMessage.NOT_UNDERSTOOD);
+					ACLMessage msg = myAgent.receive(interlock);
+					if(msg != null) {
+						if(msg.getContent().equals(agent.getCurrentPosition()))
+						agent.changeState(ExploreMultiAgent.State.target);
+						agent.randomTarget();
+						agent.setLockCoundown(7);
+						transition = 1;
+						System.out.println(agent.getLocalName()+" - INTERLOCKING with "+msg.getSender().getLocalName());
+						System.out.println(agent.getLocalName()+" - myPos "+agent.getCurrentPosition()+"");
 						return;
 					}
-					transition = 1;
-					System.out.println(agent.getLocalName()+" - Target mode activated");
-					agent.changeState(ExploreMultiAgent.State.target);
-					agent.randomTarget();
-					agent.setLockCoundown(ExploreMultiAgent.SHARELOCK);
-					System.out.println(agent.getLocalName()+" - target "+agent.getTarget());
-					System.out.println(agent.getLocalName()+" - transition to TARGET");
-					return;
 				}
 				if(!agent.getExploDone()) {
 					transition = 0;
-					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
+//					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");
 				}else {
 					if(agent.getRoute() == null)
 						agent.setRoute(makeRoute());
-					if(agent.getRdv() == null)
-						agent.setRdv(agent.getMap().getNodeMax());
-					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.PROXY);
-					ACLMessage msgHunt = myAgent.receive(mt);
-					if(msgHunt != null) {
-						String[] asking = msgHunt.getContent().split(":");
-						String nature = asking[0];
-						String target = asking[1];
-						if(nature.equals("HELP")) {
-							System.out.println(agent.getLocalName()+" - answer HELP in "+target);
-							List<String> way = agent.getMap().getShortestPath(agent.getCurrentPosition(), target);
-							if(way.size()>=1) {
-								String nextMove = way.get(0);
-								agent.move(nextMove);
-							}
-							transition = 2;
-							return;
-						}
-//						if(nature.equals("DEAD")) {
-//							System.out.println(agent.getLocalName()+" - Teamate have already DEAD this, need to move elsewhere");
-//							agent.randomTarget();
-//							agent.setLockCoundown(3);
-//							transition = 1;
-//							return;
-//						}
-					}
+//					System.out.println(agent.getLocalName()+" - target "+agent.getTarget());
+//					System.out.println(agent.getLocalName()+" - transition to TARGET");
 					transition = 3;
 				}
 				break;
@@ -122,7 +100,7 @@ public class PlanBehaviour extends OneShotBehaviour{
 			}else {
 				Collection<String> rewind = nearestLeaf(queue,result);
 				queue.removeAll(rewind);
-				System.out.println("rewind: "+rewind);
+//				System.out.println("rewind: "+rewind);
 				if(rewind.size()+1 > agent.getMaxSpace())
 					agent.setMaxSpace(rewind.size()+1);
 				result.addAll(rewind);

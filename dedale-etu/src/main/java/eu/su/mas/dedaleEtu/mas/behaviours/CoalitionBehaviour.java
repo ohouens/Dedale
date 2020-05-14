@@ -26,41 +26,34 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 	public void action() {
 		ExploreMultiAgent agent = (ExploreMultiAgent)myAgent;
 		
-		String golem = "_";
-		String hunt = null;
-		int y = 0;
+		agent.setSniff(false);
 		Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter=agent.observe().iterator();
 		while(iter.hasNext()){
 			Couple<String, List<Couple<Observation, Integer>>> couple = iter.next();
-			String nodeId=couple.getLeft();
 			List <Couple<Observation, Integer>> listObsInt = couple.getRight();
-			
-			System.out.println("OBSERVATIONS: " + listObsInt);
+//			System.out.println("OBSERVATIONS: " + listObsInt);
 			for (int i = 0; i < listObsInt.size(); i++) {
 				if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-					System.out.println(agent.getLocalName()+" - I can smell the golem from here!");
-					String stenchPos = couple.getLeft();
-					System.out.println(agent.getLocalName()+" - Odor position: " + stenchPos);
-					if(hunt == null)
-						hunt = stenchPos;
-					if(y==0)
-						golem = stenchPos;
-					else
-						golem += ":"+stenchPos;
-					y++;
+					agent.setSniff(true);
+//					System.out.println(agent.getLocalName()+" - I can smell the golem from here!");
+//					String stenchPos = couple.getLeft();
+//					System.out.println(agent.getLocalName()+" - Odor position: " + stenchPos);
 				}
 			}
 		}
 		
-		System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
-		System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
-		System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
-		if(hunt!=null) {
-			agent.changeState(State.hunt);
-			System.out.println(agent.getLocalName()+" - transition to HUNTING");
-		}
+//		System.out.println(agent.getLocalName()+" - route: "+agent.getRoute());
+//		System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
+//		System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
+		
+//		if(agent.getSniff()) {
+//			agent.changeState(State.hunt);
+//			System.out.println(agent.getLocalName()+" - transition to HUNTING");
+//			return;
+//		}
+		
 		agent.move(agent.getRouteWay());
-		System.out.println(agent.getLocalName()+" - transition to SWITCH");
+//		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 	
 	@Override

@@ -87,6 +87,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private MapRepresentation toSend;
 	private boolean inFormation=false;
 	private String rdv;
+	private String guess;
+	public String lastTry;
+	private boolean sniff=false;
 	
 	private String placeBuffer;
 	private ArrayList<String> golemBuffer = new ArrayList<>();
@@ -194,6 +197,22 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public String getLastTry() {
+		return lastTry;
+	}
+	
+	public boolean getSniff() {
+		return sniff;
+	}
+	
+	public void setSniff(boolean b) {
+		sniff = b;
+	}
+	
+	public String getGuess() {
+		return guess;
 	}
 	
 	public boolean isDoneWith(String s) {
@@ -509,7 +528,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		ack.addReceiver(receiver);
 		ack.setContent(content);
 		sendMessage(ack);
-		System.out.println(getLocalName()+" - PING: "+content);
+//		System.out.println(getLocalName()+" - PING: "+content);
 	}
 	
 	public void ping(int type, String content, List<String> receivers) {
@@ -519,7 +538,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 			ack.addReceiver(new AID(teamate,AID.ISLOCALNAME));
 		ack.setContent(content);
 		sendMessage(ack);
-		System.out.println(getLocalName()+" - PING: "+content);
+//		System.out.println(getLocalName()+" - PING: "+content);
 	}
 	
 	public void updateView() {
@@ -555,10 +574,14 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		
 		if(nextNode != null) {
 //			System.out.println(getLocalName()+" - share: "+shareDone+", done: "+done);
-			System.out.println(getLocalName()+" - current: "+getCurrentPosition()+", next: "+nextNode);
+//			System.out.println(getLocalName()+" - current: "+getCurrentPosition()+", next: "+nextNode);
+//			System.out.println(getLocalName()+" - LC: "+lockCountdown);
 			if(!nextNode.equals(getCurrentPosition()))
 			setLastMove(moveTo(nextNode));
-			System.out.println(getLocalName()+" - moveTo "+nextNode+" : "+getLastMove());
+			lastTry = nextNode;
+			if(!lastMove)
+				guess = nextNode;
+//			System.out.println(getLocalName()+" - moveTo "+nextNode+" : "+getLastMove());
 			updatePositionMemory(getCurrentPosition());
 		}
 	}
@@ -606,11 +629,11 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		for(String s : path) {
 			if(!getTunnel().contains(s) && !getLeaf().contains(s)) {
 				setTunnelFlag(false);
-				System.out.println(getLocalName()+" - tunnelFlag down");
+//				System.out.println(getLocalName()+" - tunnelFlag down");
 			}
 		}
 		setTunnelFlag(true);
-		System.out.println(getLocalName()+" - tunnelFlag raised");
+//		System.out.println(getLocalName()+" - tunnelFlag raised");
 		return true;
 	}
 	
@@ -619,7 +642,7 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		if(positionMemory.size() < 3)
 			return false;
 		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos) && positionMemory.get(positionMemory.size()-3).equals(myPos)) {
-			System.out.println(getLocalName()+" - Blocked because: " + positionMemory);
+//			System.out.println(getLocalName()+" - Blocked because: " + positionMemory);
 			return true;
 		}
 		return false;
@@ -628,19 +651,11 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	public void randomTarget() {
 		String target = "";
 		Random r = new Random();
-		if(openNodes.size() > 2) {
-			target = openNodes.get(r.nextInt(openNodes.size()));
-		}else{
-			int cursor = r.nextInt(closedNodes.size());
-			int i = 0;
-			for(String s : closedNodes) {
-				if(i == cursor) {
-					target = s;
-					break;
-				}
-				i++;
-			}
-		}
+		ArrayList<String> sample = new ArrayList<>();
+		sample.addAll(closedNodes);
+		sample.addAll(openNodes);
+		int cursor = r.nextInt(sample.size());
+		target = sample.get(cursor);
 		setTarget(target);
 	}
 	

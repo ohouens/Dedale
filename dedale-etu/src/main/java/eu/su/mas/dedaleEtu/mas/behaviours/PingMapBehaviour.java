@@ -31,13 +31,13 @@ public class PingMapBehaviour extends OneShotBehaviour{
 			ACLMessage ping = new ACLMessage(ACLMessage.REQUEST);
 			ping.setSender(myAgent.getAID());
 			ping.addReceiver(new AID(s, AID.ISLOCALNAME));
-			System.out.println(agent.getLocalName()+" - addReceiver ::: "+s);
+//			System.out.println(agent.getLocalName()+" - addReceiver ::: "+s);
 			ping.setContent(agent.compressInfo(s));
 			agent.setLastSend(ping);
 			myAgent.send(ping);
 		}
-		System.out.println(myAgent.getLocalName()+" - PING");
-		System.out.println(agent.getLocalName()+" - transition to SWITCH");
+//		System.out.println(myAgent.getLocalName()+" - PING");
+//		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 	
 	@Override

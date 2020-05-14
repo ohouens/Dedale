@@ -27,17 +27,17 @@ public class TargetBehaviour extends OneShotBehaviour{
 		String position = agent.getCurrentPosition();
 		agent.updateView();
 		
-		System.out.println(agent.getLocalName()+" - target: "+agent.getTarget()+", lockdown: "+agent.getLockCountdown());
+//		System.out.println(agent.getLocalName()+" - target: "+agent.getTarget()+", lockdown: "+agent.getLockCountdown());
 		
 		if(agent.getLockCountdown() <= 0) {
-			System.out.println(agent.getLocalName()+" - Target not reach");
+//			System.out.println(agent.getLocalName()+" - Target not reach");
 			agent.changeState(ExploreMultiAgent.State.explo);
 			agent.initCoalition();
 			return;
 		}
 		
 		if(agent.getTarget().equals(position)) {
-			System.out.println(agent.getLocalName()+" - Target reach !");
+//			System.out.println(agent.getLocalName()+" - Target reach !");
 			agent.changeState(ExploreMultiAgent.State.explo);
 			agent.initCoalition();
 			return;
@@ -46,12 +46,13 @@ public class TargetBehaviour extends OneShotBehaviour{
 		String nextNode=null;
 		List<String> openNodes = agent.getOpenNodes();
 		List<String> sp = agent.getMap().getShortestPath(position, agent.getTarget());
-		nextNode = sp.get(0);
+		if(sp.size()>0)
+			nextNode = sp.get(0);
 		
 		agent.move(nextNode);
 		agent.updateLC();
 		agent.initCoalition();
-		System.out.println(agent.getLocalName()+" - transition to SWITCH");
+//		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}
 
 	public int onEnd() {

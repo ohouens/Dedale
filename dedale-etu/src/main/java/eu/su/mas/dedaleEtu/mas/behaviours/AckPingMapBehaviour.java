@@ -30,8 +30,8 @@ public class AckPingMapBehaviour extends OneShotBehaviour{
 		ack.setContent(agent.compressInfo(ping.getSender().getLocalName()));
 		agent.setLastSend(ack);
 		((AbstractDedaleAgent)myAgent).sendMessage(ack);
-		System.out.println(myAgent.getLocalName()+" - ACK PING");
-		System.out.println(myAgent.getLocalName()+" - transition to SWITCH");
+//		System.out.println(myAgent.getLocalName()+" - ACK PING");
+//		System.out.println(myAgent.getLocalName()+" - transition to SWITCH");
 	}
 	
 	@Override

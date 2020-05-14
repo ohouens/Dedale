@@ -23,7 +23,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 		transition = 0;
 		agent.updateView();
 		agent.updateTimer();
-		System.out.println(agent.getTimer());
+//		System.out.println(agent.getTimer());
 		
 		MessageTemplate tap = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
 		ACLMessage testAckPing = agent.receive(tap);
@@ -32,7 +32,7 @@ public class SwitchBehaviour extends OneShotBehaviour{
 			transition = 2;
 			agent.decompressInfo(testAckPing.getContent());
 			agent.setLastReceive(testAckPing);
-			System.out.println(agent.getLocalName()+" - transition to SYNCHRONIZATION");
+//			System.out.println(agent.getLocalName()+" - transition to SYNCHRONIZATION");
 			return;
 		}
 		
@@ -42,15 +42,15 @@ public class SwitchBehaviour extends OneShotBehaviour{
 			transition = 1;
 			agent.decompressInfo(testPing.getContent());
 			agent.setLastReceive(testPing);
-			System.out.println(agent.getLocalName()+" - transition to ACKPING");
+//			System.out.println(agent.getLocalName()+" - transition to ACKPING");
 			return;
 		}
 		
-		if(agent.toExplo() || agent.isDone())
-			System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
-		else {
+		if(agent.toExplo() || agent.isDone()) {
+//			System.out.println(agent.getLocalName()+" - transition to PLANIFICATION");
+		}else {
 			transition = 4;
-			System.out.println(agent.getLocalName()+" - transition to PING");
+//			System.out.println(agent.getLocalName()+" - transition to PING");
 		}
 	}
 

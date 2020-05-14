@@ -41,32 +41,32 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 		
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
-		agent.printMemory();
+//		agent.printMemory();
 		
 		if (myPosition!=null){
 			//List of observable from the agent's current position
 			List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 
-			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter0 = lobs.iterator();
-			//0)chek if golem odor
-			while (iter0.hasNext()) {
-				Couple <String, List<Couple<Observation, Integer>>> StrList = iter0.next();
-				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
-				//System.out.println("OBSERVATIONS: " + listObsInt);
-				for (int i = 0; i < listObsInt.size(); i++) {
-					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
-						System.out.println("I can smell the golem from here!");
-						String stenchPos = StrList.getLeft();
-						System.out.println("Odor position: " + stenchPos);
-						agent.setLastOdor(stenchPos);
-						agent.changeState(State.hunt);
-						transition=1;
-						System.out.println(agent.getLocalName()+" - HUNT mode activated");
-						System.out.println(agent.getLocalName()+" - transition to SWITCH");
-						return;
-					}
-				}
-			}
+//			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter0 = lobs.iterator();
+//			//0)chek if golem odor
+//			while (iter0.hasNext()) {
+//				Couple <String, List<Couple<Observation, Integer>>> StrList = iter0.next();
+//				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();
+//				//System.out.println("OBSERVATIONS: " + listObsInt);
+//				for (int i = 0; i < listObsInt.size(); i++) {
+//					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
+////						System.out.println("I can smell the golem from here!");
+//						String stenchPos = StrList.getLeft();
+////						System.out.println("Odor position: " + stenchPos);
+//						agent.setLastOdor(stenchPos);
+//						agent.changeState(State.hunt);
+//						transition=1;
+//						System.out.println(agent.getLocalName()+" - HUNT mode activated");
+////						System.out.println(agent.getLocalName()+" - transition to SWITCH");
+//						return;
+//					}
+//				}
+//			}
 			
 			//1) remove the current node from openlist and add it to closedNodes.
 			closedNodes.add(myPosition);
@@ -120,11 +120,11 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 				for (int i = 0; i < listObsInt.size(); i++) {
 					if (listObsInt.get(i).getLeft().toString().equals("Stench")){
 						odorCpt++;
-						System.out.println("I can smell the golem from here!");
+//						System.out.println("I can smell the golem from here!");
 						String stenchPos = StrList.getLeft();
-						System.out.println("Odor position: " + stenchPos);
+//						System.out.println("Odor position: " + stenchPos);
 						agent.setLastOdor(stenchPos);
-						System.out.println("Odor memory: " + agent.getLastOdor().toString());
+//						System.out.println("Odor memory: " + agent.getLastOdor().toString());
 						// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
 						// càd on doit verifier que la case où on veut aller est occupée
 					}
@@ -145,16 +145,16 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			}
 			
 			//list of observations associated to the currentPosition
-			System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
+//			System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
 			
 			switch(lobs.size()) {
 				case 2:
 					agent.getLeaf().add(myPosition);
-					System.out.println(agent.getLocalName()+" - "+myPosition+" is leaf");
+//					System.out.println(agent.getLocalName()+" - "+myPosition+" is leaf");
 					break;
 				case 3:
 					agent.getTunnel().add(myPosition);
-					System.out.println(agent.getLocalName()+" - "+myPosition+" is tunnel");
+//					System.out.println(agent.getLocalName()+" - "+myPosition+" is tunnel");
 					break;
 				default:
 					break;
@@ -169,10 +169,10 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			agent.move(nextNode);
 			if(agent.getLastMove())
 				agent.updateView();
-			if(transition == 1)
-				System.out.println(agent.getLocalName()+" - transition to SWITCH");
-			else
-				System.out.println(agent.getLocalName()+" - Stay in EXPLO");
+//			if(transition == 1)
+//				System.out.println(agent.getLocalName()+" - transition to SWITCH");
+//			else
+//				System.out.println(agent.getLocalName()+" - Stay in EXPLO");
 		}
 	}
 	

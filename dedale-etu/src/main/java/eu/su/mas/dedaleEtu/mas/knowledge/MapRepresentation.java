@@ -115,7 +115,7 @@ public class MapRepresentation implements Serializable {
 		if(buffer.size() > 0) {
 			for(String name : agents) {
 				buffer.get(name).addNode(id, mapAttribute);
-				System.out.println("Preparation to "+name+" Node size: "+getBuffer(name).getAllNodes().size());
+//				System.out.println("Preparation to "+name+" Node size: "+getBuffer(name).getAllNodes().size());
 			}
 		}
 		Node n;
@@ -262,25 +262,29 @@ public class MapRepresentation implements Serializable {
 		for(String node : listNodes.split(",")) {
 			if(!node.equals("")) {
 				String position = node.split(":")[0];
-				System.out.println("MERGE - pos:"+position+","+node.split(":")[1]+" cn:"+closedNodes+" on:"+openNodes);
+//				System.out.println("MERGE - pos:"+position+","+node.split(":")[1]+" cn:"+closedNodes+" on:"+openNodes);
 				if(node.split(":")[1].equals("closed")) {
 					if(!closedNodes.contains(position)) {
 						closedNodes.add(position);
 						openNodes.remove(position);
 						addNode(position, MapAttribute.closed);
-						System.out.println("MERGE - HIT CN");
-					}else System.out.println("MERGE - MISS");
+//						System.out.println("MERGE - HIT CN");
+					}else {
+//						System.out.println("MERGE - MISS");
+					}
 				}else{
 					if(!closedNodes.contains(position) && !openNodes.contains(position)) {
 						openNodes.add(position);
 						addNode(position, MapAttribute.open);
-						System.out.println("MERGE - HIT ON");
-					}else System.out.println("MERGE - MISS");
+//						System.out.println("MERGE - HIT ON");
+					}else {
+//						System.out.println("MERGE - MISS");
+					}
 				}
 			}
 		}
 
-		System.out.println("MERGE - edges: "+listEdges);
+//		System.out.println("MERGE - edges: "+listEdges);
 		for(String edge : listEdges.split(",")){
 			if(!edge.equals("")) {
 				addEdge(edge.split(":")[0], edge.split(":")[1]);
@@ -291,16 +295,18 @@ public class MapRepresentation implements Serializable {
 			if(!odor.contentEquals("")) {
 				String id = odor.split(":")[0];
 				int time = Integer.valueOf(odor.split(":")[1]);
-				System.out.println("MERGE - odor:"+id+","+time);
+//				System.out.println("MERGE - odor:"+id+","+time);
 				if(!odors.containsKey(id)) {
 					odors.put(id, time);
-					System.out.println("MERGE - HIT");
+//					System.out.println("MERGE - HIT");
 				}
 				else {
 					if(odors.get(id) < time) {
 						odors.put(id,time);
-						System.out.println("MERGE - HIT");
-					}else  System.out.println("MERGE - MISS");
+//						System.out.println("MERGE - HIT");
+					}else {
+//						System.out.println("MERGE - MISS");
+					}
 				}
 			}
 		}
@@ -321,7 +327,7 @@ public class MapRepresentation implements Serializable {
 						nodeMax = key;
 					}
 					else if (order == 0) {
-						System.out.println("Error in getNodeMax, nodes with same id");
+//						System.out.println("Error in getNodeMax, nodes with same id");
 					}
 					// otherwise, order < 0, so nodeMax goes first in the lexicographical order
 				}

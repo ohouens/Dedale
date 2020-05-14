@@ -74,8 +74,8 @@ public final class ConfigurationFile {
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/battleMapMiniTopology";
 //	public static String INSTANCE_TOPOLOGY="resources/topology/marchMadnessTopology";
-//	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-graph";
-	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-tree";
+	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-graph";
+//	public static String INSTANCE_TOPOLOGY="resources/topology/map2020-topologyExam1-tree";
 	
 	
 	/**
@@ -96,8 +96,8 @@ public final class ConfigurationFile {
 	 * Must'nt be null as it describes the agents capabilities on the map
 	 */
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/battleRoyal";
-	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesTree";
-//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesGraph";
+//	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesTree";
+	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/map2020-entitiesGraph";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/treasureHunt/anyMap-hunt-1golem1agent-entities";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo";
 //	public static String INSTANCE_CONFIGURATION_ENTITIES="resources/agentExplo-2";
