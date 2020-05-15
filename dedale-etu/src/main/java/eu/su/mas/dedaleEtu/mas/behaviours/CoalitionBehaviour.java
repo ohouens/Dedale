@@ -52,6 +52,22 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 //			return;
 //		}
 		
+
+		if(agent.isBlocked()) {
+			if(agent.getSniff()) {
+				agent.ping(ACLMessage.INFORM_REF, agent.getGuess(), agent.getTeamates());
+	//			agent.move(agent.getGuess());
+				System.out.println(agent.getLocalName()+" - GUESS in "+agent.getGuess());
+//				agent.doWait(2000);
+	//			transition=0;
+			}else {
+				agent.changeState(State.target);
+				agent.randomTarget();
+				agent.setLockCoundown(5);
+				System.out.println(agent.getLocalName()+" - WRONG guess, need to move elsewhere");
+			}
+		}
+		
 		agent.move(agent.getRouteWay());
 //		System.out.println(agent.getLocalName()+" - transition to SWITCH");
 	}

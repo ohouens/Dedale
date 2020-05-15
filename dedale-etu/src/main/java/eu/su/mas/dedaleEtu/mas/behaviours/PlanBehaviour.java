@@ -28,13 +28,42 @@ public class PlanBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
+		if(agent.isBlocked()) {
+			agent.ping(ACLMessage.NOT_UNDERSTOOD, agent.getCurrentPosition(), agent.getTeamates());
+			agent.doWait(1000);
+			ACLMessage msg = new ACLMessage(ACLMessage.CANCEL);
+			int i = 0;
+			while(msg != null) {
+				MessageTemplate interlock = MessageTemplate.MatchPerformative(ACLMessage.NOT_UNDERSTOOD);
+				msg = myAgent.receive(interlock);
+				if(msg != null) {
+//					i++;
+//					System.out.println(agent.getLocalName()+" - "+i);
+					if(agent.getLastTry().equals(msg.getContent())) {
+						agent.changeState(ExploreMultiAgent.State.target);
+						agent.randomTarget();
+						agent.setLockCoundown(5);
+						transition = 1;
+						System.out.println(agent.getLocalName()+" - INTERLOCKING with "+msg.getSender().getLocalName()+" in "+msg.getContent());
+	//					System.out.println(agent.getLocalName()+" - myPos: "+agent.getCurrentPosition()+", lastTry:"+msg.getContent());
+						return;
+					}
+				}
+			}
+		}
+		MessageTemplate help = MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF);
+		ACLMessage msg = myAgent.receive(help);
+		if(msg != null && agent.getLastMove() && agent.getExploDone()) {
+			agent.changeState(ExploreMultiAgent.State.target);
+			agent.setTarget(msg.getContent());
+			agent.setLockCoundown(7);
+			transition = 1;
+			System.out.println(agent.getLocalName()+" - Answer HELP From"+msg.getSender().getLocalName()+" in "+msg.getContent());
+			return;
+		}
 		switch(agent.getCurrentState()) {
 			case target:
 				transition = 1;
-				if(agent.isBlocked()) {
-					transition = 1;
-//					System.out.println(agent.getLocalName()+" - Target mode activated");
-				}
 //				System.out.println(agent.getLocalName()+" - transition to TARGET");
 				break;
 			case hunt:
@@ -42,22 +71,6 @@ public class PlanBehaviour extends OneShotBehaviour{
 //				System.out.println(agent.getLocalName()+" - transition to HUNTING");
 				break;
 			default:
-				if(agent.isBlocked()) {
-					agent.ping(ACLMessage.NOT_UNDERSTOOD, agent.getLastTry(), agent.getTeamates());
-					
-					MessageTemplate interlock = MessageTemplate.MatchPerformative(ACLMessage.NOT_UNDERSTOOD);
-					ACLMessage msg = myAgent.receive(interlock);
-					if(msg != null) {
-						if(msg.getContent().equals(agent.getCurrentPosition()))
-						agent.changeState(ExploreMultiAgent.State.target);
-						agent.randomTarget();
-						agent.setLockCoundown(7);
-						transition = 1;
-						System.out.println(agent.getLocalName()+" - INTERLOCKING with "+msg.getSender().getLocalName());
-						System.out.println(agent.getLocalName()+" - myPos "+agent.getCurrentPosition()+"");
-						return;
-					}
-				}
 				if(!agent.getExploDone()) {
 					transition = 0;
 //					System.out.println(agent.getLocalName()+" - transition to EXPLORATION");

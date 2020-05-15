@@ -88,8 +88,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	private boolean inFormation=false;
 	private String rdv;
 	private String guess;
-	public String lastTry;
+	private String lastTry;
 	private boolean sniff=false;
+	private Set<String> dejaVu = new HashSet<>();
 	
 	private String placeBuffer;
 	private ArrayList<String> golemBuffer = new ArrayList<>();
@@ -197,6 +198,10 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 		addBehaviour(new startMyBehaviours(this, lb));
 		
 		System.out.println("the  agent "+this.getLocalName()+ " is started");
+	}
+	
+	public Set<String> getDejaVu(){
+		return dejaVu;
 	}
 	
 	public String getLastTry() {
@@ -639,9 +644,9 @@ public class ExploreMultiAgent extends AbstractDedaleAgent{
 	
 	public boolean isBlocked() {
 		String myPos = getCurrentPosition();
-		if(positionMemory.size() < 3)
+		if(positionMemory.size() < 2)
 			return false;
-		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos) && positionMemory.get(positionMemory.size()-3).equals(myPos)) {
+		if (positionMemory.get(positionMemory.size()-1).equals(myPos) && positionMemory.get(positionMemory.size()-2).equals(myPos)) {
 //			System.out.println(getLocalName()+" - Blocked because: " + positionMemory);
 			return true;
 		}

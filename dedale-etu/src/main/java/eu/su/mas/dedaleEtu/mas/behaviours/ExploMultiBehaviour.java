@@ -47,8 +47,8 @@ public class ExploMultiBehaviour extends OneShotBehaviour{
 			//List of observable from the agent's current position
 			List<Couple<String,List<Couple<Observation,Integer>>>> lobs=((AbstractDedaleAgent)this.myAgent).observe();//myPosition
 
-//			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter0 = lobs.iterator();
-//			//0)chek if golem odor
+			Iterator<Couple<String, List<Couple<Observation, Integer>>>> iter0 = lobs.iterator();
+			//0)chek if golem odor
 //			while (iter0.hasNext()) {
 //				Couple <String, List<Couple<Observation, Integer>>> StrList = iter0.next();
 //				List <Couple<Observation, Integer>> listObsInt = StrList.getRight();

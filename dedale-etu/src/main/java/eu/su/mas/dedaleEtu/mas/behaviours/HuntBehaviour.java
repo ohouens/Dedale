@@ -39,7 +39,6 @@ public class HuntBehaviour extends OneShotBehaviour{
 				if (listObsInt.get(i).getLeft().toString().equals("Stench")){
 //					System.out.println("I can smell the golem from here!");
 					String stenchPos = StrList.getLeft();
-//					System.out.println("Odor position: " + stenchPos);
 					nextNode = stenchPos;
 					// TODO: il faut s'assurer que la position de l'odeur est la position du golem pour mettre golemBlocked à true
 					// càd on doit verifier que la case où on veut aller est occupée
@@ -59,10 +58,9 @@ public class HuntBehaviour extends OneShotBehaviour{
 		//list of observations associated to the currentPosition
 //		System.out.println(this.myAgent.getLocalName()+" - State of the observations : "+lobs);
 		
-		agent.move(nextNode);
-		System.out.println(agent.getLocalName()+" - continue HUNTING");
+//		System.out.println(agent.getLocalName()+" - continue HUNTING");
 		transition = 0;
-		agent.updateLC();
+		agent.move(nextNode);
 	}
 
 	public int onEnd() {
