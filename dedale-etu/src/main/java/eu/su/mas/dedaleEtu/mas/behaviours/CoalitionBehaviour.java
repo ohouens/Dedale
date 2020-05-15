@@ -46,11 +46,11 @@ public class CoalitionBehaviour extends OneShotBehaviour{
 //		System.out.println(agent.getLocalName()+" - cursor: "+agent.getRouteCursor());
 //		System.out.println(agent.getLocalName()+" - maxSpace: "+agent.getMaxSpace());
 		
-//		if(agent.getSniff()) {
-//			agent.changeState(State.hunt);
-//			System.out.println(agent.getLocalName()+" - transition to HUNTING");
-//			return;
-//		}
+		if(agent.getSniff()) {
+			agent.changeState(State.hunt);
+			System.out.println(agent.getLocalName()+" - transition to HUNTING");
+			return;
+		}
 		
 
 		if(agent.isBlocked()) {

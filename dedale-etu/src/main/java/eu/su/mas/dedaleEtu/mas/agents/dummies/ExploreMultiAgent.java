@@ -15,6 +15,7 @@ import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreMultiAgent.State;
 import eu.su.mas.dedaleEtu.mas.behaviours.AckPingMapBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.CoalitionBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploMultiBehaviour;
